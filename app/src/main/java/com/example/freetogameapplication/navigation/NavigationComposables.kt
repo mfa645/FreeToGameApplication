@@ -28,7 +28,6 @@ fun MainActivityNavigation() {
         }
     }
 }
-
 @Composable
 fun MainNavigation(
     navController: NavHostController,
@@ -49,6 +48,7 @@ fun MainNavigation(
         }
         composable(route = NavigationRoutes.ToPlay.route) {
             ToPlayView(
+                viewModel = viewModel,
                 paddingValues = paddingValues,
             ) { game ->
                 navController.navigate(NavigationRoutes.Detail.route + "${game.id}")

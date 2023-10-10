@@ -1,6 +1,7 @@
 package com.example.freetogameapplication.feature.games.ui.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,43 +34,42 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ToPlayView(
-    viewModel: GamesViewModel = koinViewModel(),
+    viewModel: GamesViewModel,
     paddingValues: PaddingValues,
     onItemClicked: (Game) -> Unit
 ) {
     val games by viewModel.toPlayGames.collectAsState()
     val scope = rememberCoroutineScope()
 
-    LazyColumn(
-        modifier = Modifier
-            .padding(paddingValues)
-            .fillMaxSize()
-            .background(color = DarkerGrey)
-            .padding(top = 8.dp),
-    ) {
-        item {
-            MultiColorText(
-                text1 = "Games you ",
-                color1 = Color.White,
-                text2 = "need to play!",
-                color2 = SolidBlue,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                paddingValues = PaddingValues(horizontal = 4.dp)
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-        }
-        if (games.isNullOrEmpty()) {
+    Column(modifier = Modifier.padding()) {
+        LazyColumn(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(color = DarkerGrey)
+                .padding(top = 8.dp),
+        ) {
             item {
-                Text(
-                    text = "No ToPlay games added yet!",
-                    fontSize = 18.sp,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    color = Color.White
+                MultiColorText(
+                    text1 = "Games you ",
+                    color1 = Color.White,
+                    text2 = "need to play!",
+                    color2 = SolidBlue,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    paddingValues = PaddingValues(horizontal = 4.dp)
                 )
+                Spacer(modifier = Modifier.height(12.dp))
+                if (games.isNullOrEmpty()) {
+                    Text(
+                        text = "No ToPlay games added yet!",
+                        fontSize = 18.sp,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                }
             }
-
             items(games) { game ->
                 GameItemView(modifier = Modifier.fillMaxWidth(), game = game) {
                     onItemClicked(game)

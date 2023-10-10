@@ -20,16 +20,23 @@ fun DescriptionView(paddingValues: PaddingValues) {
         modifier = Modifier
             .padding(paddingValues)
             .fillMaxSize()
-            .background(color = Color.Blue)
+            .background(color = Color.DarkGray)
     ) {
         val (
             val1,
             val2,
         ) = createRefs()
         Text(
-            text = "DESCRIPCIÓN DE LA APLICACIÓN VA AQUÍ",
-            modifier = Modifier.size(200.dp),
-            fontSize = 20.sp
+            text = "FREETOGAME",
+            modifier = Modifier
+                .constrainAs(val1) {
+                    top.linkTo(parent.top, 16.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+                .size(200.dp),
+            fontSize = 20.sp,
+            color = Color.White
         )
     }
 

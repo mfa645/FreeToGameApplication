@@ -49,14 +49,13 @@ open class GamesViewModel(
             SharingStarted.WhileSubscribed(5000),
             _games.value
         )
+
     private val _toPlayGames = MutableStateFlow(listOf<Game>())
     val toPlayGames = _toPlayGames.asStateFlow()
-
 
     init {
         fetchApiGames()
         fetchGames()
-        fetchToPlayGames()
     }
     private fun fetchApiGames() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -74,23 +73,14 @@ open class GamesViewModel(
                 val localData = allGamesUseCase.invoke(isLocal = true)
                 withContext(Dispatchers.Main){
                     _games.value = localData
+                    _toPlayGames.value = localData.filter {
+                        it.isToPlayGame
+                    }
                 }
             } catch (e: Exception) {
             }
         }
     }
-    private fun fetchToPlayGames() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val localData = allGamesUseCase.invoke(isLocal = true)
-                withContext(Dispatchers.Main){
-                    _games.value = localData
-                }
-            } catch (e: Exception) {
-            }
-        }
-    }
-
 
     fun fetchGame(gameId: Int) {
 
@@ -104,7 +94,6 @@ open class GamesViewModel(
             }
         }
     }
-
 
     private fun doesMatchSearchQuery(query: String, game: Game): Boolean {
         val matchingCombinations = listOf(
