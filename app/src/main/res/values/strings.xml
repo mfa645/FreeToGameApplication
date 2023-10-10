@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">FreeToGameApplication</string>
+    <string name="home_title">Home</string>
+    <string name="toplay_title">To Play</string>
+    <string name="description_title">Description</string></resources>
