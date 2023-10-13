@@ -14,12 +14,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.example.freetogameapp.ui.theme.Pink40
-import com.example.freetogameapp.ui.theme.Pink80
-import com.example.freetogameapp.ui.theme.Purple40
-import com.example.freetogameapp.ui.theme.Purple80
-import com.example.freetogameapp.ui.theme.PurpleGrey40
-import com.example.freetogameapp.ui.theme.PurpleGrey80
 import com.example.freetogameapp.ui.theme.Typography
 
 private val DarkColorScheme = darkColorScheme(

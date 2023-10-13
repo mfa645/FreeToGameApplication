@@ -50,8 +50,8 @@ import com.example.freetogameapplication.feature.games.viewmodel.GamesViewModel
 import com.example.freetogameapplication.navigation.MainNavigation
 import com.example.freetogameapplication.navigation.model.BottomBarScreens
 import com.example.freetogameapplication.navigation.model.NavigationRoutes
-import com.example.freetogameapp.ui.theme.DarkerGrey
-import com.example.freetogameapp.ui.theme.SolidBlue
+import com.example.freetogameapplication.ui.theme.DarkerGrey
+import com.example.freetogameapplication.ui.theme.SolidBlue
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,18 +64,23 @@ fun MainView(viewModel: GamesViewModel = koinViewModel()) {
         topBar = {
             MyTopBar(navController = navController, viewModel)
         },
-        bottomBar = { BottomBar(navController = navController) }
+        bottomBar = { BottomBar(navController = navController){route->
+            viewModel.setCurrentRoute(route)
+            navController.navigate(route)
+        } }
     ) { paddingValues ->
         MainNavigation(navController = navController, paddingValues, viewModel)
     }
 }
 
 @Composable
-fun BottomBar(navController: NavHostController) {
+fun BottomBar(
+    navController: NavHostController,
+    onNavButtonClicked: (route: String) -> Unit
+) {
     val views = BottomBarScreens::class.sealedSubclasses.mapNotNull { sealedObject ->
         sealedObject.objectInstance
     }
-
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -85,7 +90,7 @@ fun BottomBar(navController: NavHostController) {
             AddItem(
                 view = view,
                 currentDestination = currentDestination,
-                navController = navController
+                onNavButtonClicked = onNavButtonClicked
             )
         }
     }
@@ -179,7 +184,7 @@ fun MyTopBar(navController: NavHostController, viewModel: GamesViewModel = koinV
 fun RowScope.AddItem(
     view: BottomBarScreens,
     currentDestination: NavDestination?,
-    navController: NavHostController
+    onNavButtonClicked: (route: String) -> Unit
 ) {
     NavigationBarItem(
         label = {
@@ -194,9 +199,7 @@ fun RowScope.AddItem(
         selected = currentDestination?.hierarchy?.any {
             it.route == view.route
         } == true,
-        onClick = {
-            navController.navigate(view.route)
-        },
+        onClick = { onNavButtonClicked(view.route) },
         colors = NavigationBarItemDefaults.colors(
             indicatorColor = Color.DarkGray,
             selectedIconColor = SolidBlue,

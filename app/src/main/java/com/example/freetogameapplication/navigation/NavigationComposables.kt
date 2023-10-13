@@ -1,7 +1,10 @@
 package com.example.freetogameapplication.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,26 +17,42 @@ import com.example.freetogameapplication.feature.games.ui.composables.ToPlayView
 import com.example.freetogameapplication.feature.games.viewmodel.GamesViewModel
 import com.example.freetogameapplication.feature.splash.SplashView
 import com.example.freetogameapplication.navigation.model.NavigationRoutes
+import com.example.model.feature.games.Game
 
 @Composable
 fun MainActivityNavigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "splash_view") {
-        composable("splash_view") {
+    NavHost(navController = navController, startDestination = NavigationRoutes.Splash.route) {
+        composable(NavigationRoutes.Splash.route) {
             SplashView(navController = navController)
         }
 
-        composable("main_view") {
+        composable("main") {
             MainView()
         }
     }
 }
+
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MainNavigation(
     navController: NavHostController,
     paddingValues: PaddingValues,
     viewModel: GamesViewModel
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val onItemClickAction = { game: Game ->
+        keyboardController?.hide()
+        if (viewModel.isSearching.value) viewModel.onSearchingToggle()
+        navController.navigate(NavigationRoutes.Detail.route + "${game.id}")
+    }
+
+    val onCancelAddGameToPlayList = {
+        keyboardController?.hide()
+        viewModel.dismissToPlayDialog()
+    }
+
     NavHost(
         navController = navController,
         startDestination = "home"
@@ -42,17 +61,15 @@ fun MainNavigation(
             ListView(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
-            ) { game ->
-                navController.navigate(NavigationRoutes.Detail.route + "${game.id}")
-            }
+                onItemClicked = onItemClickAction
+            )
         }
         composable(route = NavigationRoutes.ToPlay.route) {
             ToPlayView(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
-            ) { game ->
-                navController.navigate(NavigationRoutes.Detail.route + "${game.id}")
-            }
+                onItemClicked = onItemClickAction
+            )
         }
         composable(route = NavigationRoutes.Description.route) {
             DescriptionView(paddingValues)
@@ -63,10 +80,29 @@ fun MainNavigation(
                 viewModel = viewModel,
                 gameId = desCurlyBracketizeArg(
                     backStackEntry.arguments?.getString("gameId")
-                )
-            ) { game ->
-//TODO
-            }
+                ),
+                onCancelAddToPlayList = onCancelAddGameToPlayList,
+                onConfirmAddGameToPlayList = { game: Game, toPlayDesc: String ->
+                    keyboardController?.hide()
+                    viewModel.dismissToPlayDialog()
+                    game.isToPlayGame = true
+                    game.toPlayString = toPlayDesc
+                    viewModel.editGame(game = game)
+                    navController.popBackStack()
+                },
+                onAddToPlayListButtonClicked = { game ->
+                    if (game.isToPlayGame) {
+                        game.isToPlayGame = false
+                        game.toPlayString = ""
+                        viewModel.editGame(game = game)
+                        navController.popBackStack()
+                    } else {
+                        game.isToPlayGame = true
+                        viewModel.showToPlayAddDialog()
+                    }
+                    KeyboardActions(onAny = { keyboardController?.hide() })
+                }
+            )
         }
     }
 }

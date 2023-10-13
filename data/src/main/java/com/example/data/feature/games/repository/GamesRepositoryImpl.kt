@@ -5,7 +5,6 @@ import com.example.data.feature.games.factory.GameFactory
 import com.example.model.feature.games.Game
 import com.example.model.feature.games.enums.GenreFilter
 import com.example.model.feature.games.enums.PlatformFilter
-import com.example.model.feature.games.enums.SortFilter
 
 internal class GamesRepositoryImpl(
     private val factory: GameFactory
@@ -14,20 +13,19 @@ internal class GamesRepositoryImpl(
         factory.cache.getAllGames()
 
     override suspend fun getAllGames(isLocal: Boolean): List<Game> =
-        if(isLocal)
-            factory.cache.getAllGames()
-        else
-            factory.remote.getAllGames()
+            if (isLocal) {
+                factory.cache.getAllGames()
+            } else
+                factory.remote.getAllGames()
 
-    override fun getFilteredGames(
+
+    override suspend fun getFilteredGames(
         filterByTitle: String,
-        filterByGenre: GenreFilter,
-        filterByPlatform: PlatformFilter,
-        filterBySort: SortFilter,
-
-        ): List<Game> {
-        TODO("Not yet implemented")
-    }
+        filterByGenre: GenreFilter?,
+        filterByPlatform: PlatformFilter?,
+        isToPlayGames :Boolean
+    ): List<Game> =
+        factory.cache.getFilteredGames(filterByTitle, filterByGenre, filterByPlatform,isToPlayGames)
 
     override suspend fun getGameById(gameId: Int): Game = factory.cache.getGameById(gameId)
 

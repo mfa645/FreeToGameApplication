@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
-import com.example.freetogameapp.ui.theme.LightGrey
-import com.example.freetogameapp.ui.theme.LighterDarkGrey
+import com.example.freetogameapplication.ui.theme.LightGrey
+import com.example.freetogameapplication.ui.theme.LighterDarkGrey
 import com.example.freetogameapplication.R
 import com.example.model.feature.games.Game
 

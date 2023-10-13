@@ -26,18 +26,18 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.freetogameapplication.feature.games.viewmodel.GamesViewModel
-import com.example.freetogameapp.ui.theme.DarkerGrey
-import com.example.freetogameapp.ui.theme.SolidBlue
+import com.example.freetogameapplication.ui.theme.DarkerGrey
+import com.example.freetogameapplication.ui.theme.SolidBlue
 import com.example.model.feature.games.Game
-import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun ToPlayView(
     viewModel: GamesViewModel,
     paddingValues: PaddingValues,
-    onItemClicked: (Game) -> Unit
+    onItemClicked: (Game) -> Unit,
 ) {
+    viewModel.fetchFilteredToPlayGames()
     val games by viewModel.toPlayGames.collectAsState()
     val scope = rememberCoroutineScope()
 
@@ -62,7 +62,7 @@ fun ToPlayView(
                 Spacer(modifier = Modifier.height(12.dp))
                 if (games.isNullOrEmpty()) {
                     Text(
-                        text = "No ToPlay games added yet!",
+                        text = "No ToPlay games found!",
                         fontSize = 18.sp,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,

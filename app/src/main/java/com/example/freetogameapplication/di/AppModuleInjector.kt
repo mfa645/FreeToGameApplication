@@ -15,7 +15,7 @@ object AppModuleInjector : KoinModuleLoader {
             .union(
                 listOf(
                     module {
-                        viewModel { GamesViewModel(get(), get(), get(), get()) }
+                        viewModel { GamesViewModel(get(), get(), get(), get(),get()) }
                     }
                 )
             ).toList()

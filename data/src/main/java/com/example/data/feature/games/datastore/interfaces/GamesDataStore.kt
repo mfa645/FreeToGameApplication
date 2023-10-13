@@ -4,17 +4,15 @@ import com.example.data.feature.games.datastore.cache.model.DatabaseGame
 import com.example.model.feature.games.Game
 import com.example.model.feature.games.enums.GenreFilter
 import com.example.model.feature.games.enums.PlatformFilter
-import com.example.model.feature.games.enums.SortFilter
 
 interface GamesDataStore {
     suspend fun getAllGames(page:Int,limit:Int): List<Game>
     suspend fun getAllGames(): List<Game>
-
     suspend fun getFilteredGames(
         filterByTitle: String,
-        filterByGenre: GenreFilter,
-        filterByPlatform: PlatformFilter,
-        filterBySort: SortFilter
+        filterByGenre: GenreFilter?,
+        filterByPlatform: PlatformFilter?,
+        isToPlayGames: Boolean
     ): List<Game>
 
     suspend fun getGameById(gameId: Int): Game

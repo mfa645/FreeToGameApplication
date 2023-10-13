@@ -13,5 +13,5 @@ data class Game(
     val releaseDate: String,
     val freetogameProfileUrl: String,
     var isToPlayGame: Boolean = false,
-    val toPlayString : String = "",
+    var toPlayString : String = "",
 )

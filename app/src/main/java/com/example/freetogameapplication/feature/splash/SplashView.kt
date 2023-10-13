@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.freetogameapplication.R
+import com.example.freetogameapplication.navigation.model.NavigationRoutes
 import kotlinx.coroutines.delay
-
 
 //TODO: TRANSLADAR las medidas y textos a values en string etc
 @Composable
@@ -46,7 +46,7 @@ fun SplashView(navController : NavController) {
             )
         )
         delay(3000L)
-        navController.navigate("main_view")
+        navController.navigate(NavigationRoutes.Main.route)
     }
     Column(
         modifier = Modifier.fillMaxSize(),

@@ -1,6 +1,5 @@
 package com.example.data.feature.games.datastore.cache.datastore
 
-import android.util.Log
 import com.example.data.feature.games.datastore.cache.model.DatabaseGame
 import com.example.data.feature.games.datastore.interfaces.GamesDataStore
 import com.example.data.feature.games.datastore.mappers.toDomain
@@ -8,7 +7,6 @@ import com.example.data.feature.services.database.AppDatabase
 import com.example.model.feature.games.Game
 import com.example.model.feature.games.enums.GenreFilter
 import com.example.model.feature.games.enums.PlatformFilter
-import com.example.model.feature.games.enums.SortFilter
 
 internal class DatabaseGameDataStoreImpl(
     private val appDatabase: AppDatabase
@@ -29,11 +27,30 @@ internal class DatabaseGameDataStoreImpl(
 
     override suspend fun getFilteredGames(
         filterByTitle: String,
-        filterByGenre: GenreFilter,
-        filterByPlatform: PlatformFilter,
-        filterBySort: SortFilter
+        filterByGenre: GenreFilter?,
+        filterByPlatform: PlatformFilter?,
+        isToPlayGames: Boolean
     ): List<Game> {
-        TODO("Not yet implemented")
+        if (isToPlayGames) {
+            return this@DatabaseGameDataStoreImpl.appDatabase.gamesDao()
+                .getFilteredToPlayGames(
+                    filterTitle = filterByTitle,
+                    genreFilter = filterByGenre?.filter ?: "%%",
+                    platformFilter = filterByPlatform?.filter ?: "%%",
+                    isToPlayGame = true
+                ).map { databaseGame ->
+                    databaseGame.toDomain()
+                }
+        } else {
+            return this@DatabaseGameDataStoreImpl.appDatabase.gamesDao()
+                .getFilteredGames(
+                    filterTitle = filterByTitle,
+                    genreFilter = filterByGenre?.filter ?: "%%",
+                    platformFilter = filterByPlatform?.filter ?: "%%",
+                ).map { databaseGame ->
+                    databaseGame.toDomain()
+                }
+        }
     }
 
     override suspend fun getGameById(gameId: Int): Game {

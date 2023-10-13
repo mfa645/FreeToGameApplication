@@ -4,5 +4,7 @@ enum class NavigationRoutes (val route:String) {
     Home("home"),
     ToPlay("toplay"),
     Description("description"),
-    Detail("detail/")
+    Detail("detail/"),
+    Splash("splash"),
+    Main("main")
 }

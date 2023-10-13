@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.freetogameapplication.navigation.MainActivityNavigation
-import com.example.freetogameapp.ui.theme.SolidBlue
+import com.example.freetogameapplication.ui.theme.SolidBlue
 import com.example.freetogameapplication.ui.theme.FreeToGameApplicationTheme
 
 class MainActivity : ComponentActivity() {

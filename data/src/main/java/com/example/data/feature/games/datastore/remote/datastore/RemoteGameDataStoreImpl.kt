@@ -7,15 +7,10 @@ import com.example.data.feature.games.datastore.remote.GamesService
 import com.example.model.feature.games.Game
 import com.example.model.feature.games.enums.GenreFilter
 import com.example.model.feature.games.enums.PlatformFilter
-import com.example.model.feature.games.enums.SortFilter
 
 internal class RemoteGameDataStoreImpl(
     private val gamesService: GamesService
 ) : GamesDataStore {
-    override suspend fun getAllGames(page: Int, limit: Int): List<Game> {
-        TODO("Not supported")
-    }
-
     override suspend fun getAllGames(): List<Game> {
         val result = this@RemoteGameDataStoreImpl.gamesService.getAllGames()
 
@@ -29,14 +24,13 @@ internal class RemoteGameDataStoreImpl(
 
     override suspend fun getFilteredGames(
         filterByTitle: String,
-        filterByGenre: GenreFilter,
-        filterByPlatform: PlatformFilter,
-        filterBySort: SortFilter
+        filterByGenre: GenreFilter?,
+        filterByPlatform: PlatformFilter?,
+        isToPlayGames: Boolean
     ): List<Game> {
         val result = this@RemoteGameDataStoreImpl.gamesService.getFilteredGames(
             platform = filterByPlatform,
             tag = filterByGenre,
-            sortBy = filterBySort
         )
         if (result.isSuccessful)
             return (result.body()?.map { game ->
@@ -52,6 +46,11 @@ internal class RemoteGameDataStoreImpl(
         else
             throw Exception("The game cannot be found")
     }
+
+    override suspend fun getAllGames(page: Int, limit: Int): List<Game> {
+        TODO("Not supported")
+    }
+
 
     override fun editGame(game: DatabaseGame) {
         TODO("Not supported")
