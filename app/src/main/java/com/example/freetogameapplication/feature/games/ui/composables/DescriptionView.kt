@@ -41,7 +41,9 @@ import com.example.freetogameapplication.ui.theme.TransparentDarkerGrey
 @Composable
 fun DescriptionView(
     paddingValues: PaddingValues,
-    onButtonClicked: () -> Unit
+    onButtonClicked: () -> Unit,
+    onFreeToGameButtonClicked: () -> Unit,
+
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -97,7 +99,7 @@ fun DescriptionView(
                 },
             textAlign = TextAlign.Justify,
             fontWeight = FontWeight.Bold,
-            fontSize = 28.sp,
+            fontSize = 26.sp,
             lineHeight = 32.sp,
             color = Color.White,
         )
@@ -145,7 +147,7 @@ fun DescriptionView(
                 border = BorderStroke(0.5.dp, Color.White),
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
-                onClick = onButtonClicked
+                onClick = onFreeToGameButtonClicked
             ) {
                 Text(
                     text = "FreeToGame",

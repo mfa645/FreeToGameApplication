@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -64,7 +65,7 @@ fun GameItemView(
                 modifier = Modifier.constrainAs(photoView) {
                     top.linkTo(parent.top)
                     width = Dimension.matchParent
-                }
+                }.clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
             )
             Text(
                 text = game.title,

@@ -5,6 +5,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -41,12 +42,20 @@ fun MainNavigation(
     viewModel: GamesViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val uriHandler = LocalUriHandler.current
+
+    val onFreeToGameUriClicked= {uri :String ->
+        uriHandler.openUri(uri)
+    }
+    val onGameUriClicked= {uri :String ->
+        uriHandler.openUri(uri)
+    }
 
     val onStartNowButtonClicked = {
         navController.navigate(NavigationRoutes.Home.route)
     }
     val onFreeToGameButtonClicked = {
-        navController.navigate(NavigationRoutes.Home.route)
+        uriHandler.openUri("https://www.freetogame.com/")
     }
 
     val onItemClickAction = { game: Game ->
@@ -79,7 +88,7 @@ fun MainNavigation(
             )
         }
         composable(route = NavigationRoutes.Description.route) {
-            DescriptionView(paddingValues, onStartNowButtonClicked)
+            DescriptionView(paddingValues, onStartNowButtonClicked, onFreeToGameButtonClicked)
         }
         composable(route = NavigationRoutes.Detail.route + "{gameId}") { backStackEntry ->
             GameDetailView(
@@ -108,7 +117,9 @@ fun MainNavigation(
                         viewModel.showToPlayAddDialog()
                     }
                     KeyboardActions(onAny = { keyboardController?.hide() })
-                }
+                },
+                onFreeToGameUriClicked = onFreeToGameUriClicked,
+                onGameUriClicked = onGameUriClicked
             )
         }
     }

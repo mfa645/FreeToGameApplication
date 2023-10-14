@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -25,6 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,6 +53,9 @@ fun GameDetailView(
     onAddToPlayListButtonClicked: (Game) -> Unit,
     onCancelAddToPlayList: () -> Unit,
     onConfirmAddGameToPlayList: (Game, String) -> Unit,
+    onFreeToGameUriClicked: (uri: String)->Unit,
+    onGameUriClicked: (uri: String)->Unit,
+
 ) {
     val istoPlayDialogShown by viewModel.showToPlayDialog.collectAsState()
     viewModel.fetchGame(gameId = gameId.toInt())
@@ -65,7 +71,7 @@ fun GameDetailView(
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .background(color = DarkerGrey)
-                .padding(12.dp)
+                .padding(16.dp)
         )
         {
             val (titleView,
@@ -88,7 +94,7 @@ fun GameDetailView(
                 model = game?.thumbnail,
                 contentDescription = null,
                 modifier = Modifier.constrainAs(photoView) {
-                    top.linkTo(parent.top)
+                    top.linkTo(parent.top, 4.dp)
                     width = Dimension.matchParent
                 }
             )
@@ -250,7 +256,7 @@ fun GameDetailView(
                     start.linkTo(parent.start)
                     width = Dimension.matchParent
                 }, verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
+                horizontalArrangement = Arrangement.Center
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(
@@ -261,12 +267,13 @@ fun GameDetailView(
                     modifier = Modifier.size(20.dp)
                 )
 
-                Text(
-                    text = "FreeToGame Link ",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.LightGray,
-                    textAlign = TextAlign.Justify,
-                    fontWeight = FontWeight.Bold
+                ClickableText(
+                    text = AnnotatedString("FreeToGame link   "),
+                    modifier= Modifier,
+                    onClick = {onFreeToGameUriClicked(game!!.freetogameProfileUrl)
+                    },
+                    style = TextStyle(color= LightGrey, fontWeight = FontWeight.Bold)
+
                 )
 
                 Icon(
@@ -277,12 +284,14 @@ fun GameDetailView(
                     tint = LightGrey,
                     modifier = Modifier.size(20.dp)
                 )
-                Text(
-                    text = "Game Url ",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.LightGray,
-                    textAlign = TextAlign.Justify,
-                    fontWeight = FontWeight.Bold
+
+                ClickableText(
+                    text = AnnotatedString("Game Url "),
+                    modifier= Modifier,
+                    onClick = {onGameUriClicked(game!!.gameUrl)
+                    },
+                    style = TextStyle(color= LightGrey, fontWeight = FontWeight.Bold)
+
                 )
 
             }
