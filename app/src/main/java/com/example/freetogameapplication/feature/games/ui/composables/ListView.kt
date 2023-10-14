@@ -36,6 +36,8 @@ fun ListView(
     val games by viewModel.games.collectAsState()
     val scope = rememberCoroutineScope()
 
+
+
     if (games.isNullOrEmpty()) {
         Text(
             text = "No games found!",

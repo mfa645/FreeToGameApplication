@@ -135,8 +135,8 @@ open class GamesViewModel(
     }
 
     fun onSearchingToggle() {
-        _isSearching.value = !isSearching.value
         _searchText.value=""
+        _isSearching.value = !isSearching.value
     }
 
     fun showToPlayAddDialog(){

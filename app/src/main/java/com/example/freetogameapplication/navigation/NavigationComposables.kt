@@ -42,6 +42,13 @@ fun MainNavigation(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    val onStartNowButtonClicked = {
+        navController.navigate(NavigationRoutes.Home.route)
+    }
+    val onFreeToGameButtonClicked = {
+        navController.navigate(NavigationRoutes.Home.route)
+    }
+
     val onItemClickAction = { game: Game ->
         keyboardController?.hide()
         if (viewModel.isSearching.value) viewModel.onSearchingToggle()
@@ -72,7 +79,7 @@ fun MainNavigation(
             )
         }
         composable(route = NavigationRoutes.Description.route) {
-            DescriptionView(paddingValues)
+            DescriptionView(paddingValues, onStartNowButtonClicked)
         }
         composable(route = NavigationRoutes.Detail.route + "{gameId}") { backStackEntry ->
             GameDetailView(

@@ -66,6 +66,7 @@ fun MainView(viewModel: GamesViewModel = koinViewModel()) {
         },
         bottomBar = { BottomBar(navController = navController){route->
             viewModel.setCurrentRoute(route)
+            if(viewModel.isSearching.value) viewModel.onSearchingToggle()
             navController.navigate(route)
         } }
     ) { paddingValues ->
