@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -42,8 +42,10 @@ import com.example.freetogameapplication.ui.theme.LightGrey
 import com.example.freetogameapplication.ui.theme.SolidBlue
 import com.example.freetogameapplication.R
 import com.example.freetogameapplication.feature.games.viewmodel.GamesViewModel
-import com.example.freetogameapplication.ui.theme.LighterDarkGrey
+import com.example.freetogameapplication.ui.theme.White
+import com.example.freetogameapplication.ui.values.LocalDim
 import com.example.model.feature.games.Game
+import com.example.model.feature.games.enums.PlatformFilter
 
 @Composable
 fun GameDetailView(
@@ -57,21 +59,24 @@ fun GameDetailView(
     onGameUriClicked: (uri: String)->Unit,
 
 ) {
+    val dimensions = LocalDim.current
+    val context = LocalContext.current
+    
     val istoPlayDialogShown by viewModel.showToPlayDialog.collectAsState()
     viewModel.fetchGame(gameId = gameId.toInt())
     val game by viewModel.gameDetail.collectAsState()
 
     if (game == null) {
-        Text(text = "The game could not be found", color = Color.Red)
+        Text(text = context.getString(R.string.game_notfound), color = Color.Red)
     } else {
-        val isBothPlatforms = game?.platform == "PC (Windows), Web Browser"
+        val isBothPlatforms = game?.platform == PlatformFilter.PCAndWebBrowser.filter
         ConstraintLayout(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .background(color = DarkerGrey)
-                .padding(16.dp)
+                .padding(dimensions.spaceLarge)
         )
         {
             val (titleView,
@@ -94,74 +99,74 @@ fun GameDetailView(
                 model = game?.thumbnail,
                 contentDescription = null,
                 modifier = Modifier.constrainAs(photoView) {
-                    top.linkTo(parent.top, 4.dp)
+                    top.linkTo(parent.top, dimensions.spaceSmall)
                     width = Dimension.matchParent
                 }
             )
             Text(
                 text = game!!.title,
                 modifier = Modifier.constrainAs(titleView) {
-                    top.linkTo(photoView.bottom, 4.dp)
+                    top.linkTo(photoView.bottom, dimensions.spaceSmall)
                     height = Dimension.wrapContent
                 },
                 style = MaterialTheme.typography.titleLarge,
-                color = Color.White,
-                fontSize = 24.sp
+                color = White,
+                fontSize = dimensions.titleDetail
             )
             Row(
                 modifier = Modifier.constrainAs(platformViewFirst) {
-                    top.linkTo(titleView.bottom, 12.dp)
+                    top.linkTo(titleView.bottom, dimensions.spaceMediumLarge)
                     start.linkTo(titleView.start)
                 },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = if (game!!.platform.contains("PC (Windows)")
+                    text = if (game!!.platform.contains(PlatformFilter.PC.filter)
                     )
-                        "PC (Windows)"
+                        PlatformFilter.PC.filter
                     else
-                        "Web Browser",
-                    color = Color.White
+                        PlatformFilter.WebBrowser.filter,
+                    color = White
                 )
                 Icon(
                     imageVector = ImageVector.vectorResource(
                         id =
-                        if (game!!.platform.contains("PC (Windows)"))
+                        if (game!!.platform.contains(PlatformFilter.PC.filter))
                             R.drawable.ic_windows
                         else
                             R.drawable.ic_browser
                     ),
                     contentDescription = null,
                     tint = LightGrey,
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(dimensions.iconSize)
                 )
             }
 
             if (isBothPlatforms) {
                 Row(
                     modifier = Modifier.constrainAs(platformViewSecond) {
-                        top.linkTo(titleView.bottom, 8.dp)
-                        start.linkTo(platformViewFirst.end, 8.dp)
+                        top.linkTo(titleView.bottom, dimensions.spaceMedium)
+                        start.linkTo(platformViewFirst.end, dimensions.spaceMedium)
                     }, verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "Web Browser", color = Color.White)
+                    Text(text = PlatformFilter.WebBrowser.filter, color = White)
                     Icon(
                         imageVector = ImageVector.vectorResource(
                             id = R.drawable.ic_browser
                         ),
                         contentDescription = null,
                         tint = LightGrey,
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(dimensions.iconSize)
                     )
                 }
             }
-            Card(shape = RoundedCornerShape(12.dp),
+            Card(shape = RoundedCornerShape(dimensions.horizontalDefaultSpace),
                 colors = CardDefaults.cardColors(containerColor = LightGrey),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = dimensions.cardElevation),
                 modifier = Modifier
                     .constrainAs(genreView) {
-                        start.linkTo(titleView.end, 8.dp)
+                        start.linkTo(titleView.end, dimensions.spaceMedium)
                         top.linkTo(titleView.top)
                         width = Dimension.wrapContent
                         height = Dimension.wrapContent
@@ -174,7 +179,7 @@ fun GameDetailView(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
-                    modifier = Modifier.padding(4.dp)
+                    modifier = Modifier.padding(dimensions.spaceSmall)
                 )
             }
 
@@ -182,77 +187,77 @@ fun GameDetailView(
                 text = game!!.shortDescription,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.constrainAs(description) {
-                    top.linkTo(platformViewFirst.bottom, 8.dp)
+                    top.linkTo(platformViewFirst.bottom,dimensions.spaceMedium)
                     width = Dimension.matchParent
                     height = Dimension.wrapContent
 
                 },
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.LightGray,
+                color = LightGrey,
                 textAlign = TextAlign.Justify
             )
 
             Text(
                 text = game!!.releaseDate,
                 modifier = Modifier.constrainAs(dateView) {
-                    top.linkTo(description.bottom, 8.dp)
+                    top.linkTo(description.bottom, dimensions.spaceMedium)
                     end.linkTo(description.end)
                     height = Dimension.wrapContent
 
                 },
                 fontSize = 12.sp,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.LightGray,
+                color = LightGrey,
                 textAlign = TextAlign.Justify
             )
 
             Row(
                 modifier = Modifier.constrainAs(additionalInfoView) {
-                    top.linkTo(dateView.bottom, 8.dp)
+                    top.linkTo(dateView.bottom, dimensions.spaceMedium)
                     start.linkTo(description.start)
                 }, verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = "Additional Information", color = Color.White)
+                Text(text = context.getString(R.string.detail_addiontal_info), color = White)
                 Icon(
                     imageVector = ImageVector.vectorResource(
                         id = R.drawable.ic_info
                     ),
                     contentDescription = null,
                     tint = LightGrey,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(dimensions.smallIconSize)
                 )
             }
 
 
             Text(
-                text = "Publisher: " + game!!.publisher,
+                text = context.getString(R.string.detail_publisher) + game!!.publisher,
                 modifier = Modifier.constrainAs(publisherView) {
-                    top.linkTo(additionalInfoView.bottom, 8.dp)
+                    top.linkTo(additionalInfoView.bottom, dimensions.spaceMedium)
                     start.linkTo(additionalInfoView.start)
                     height = Dimension.wrapContent
 
                 },
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.LightGray,
+                color = LightGrey,
                 textAlign = TextAlign.Justify
             )
 
             Text(
-                text = "Developer: " + game!!.developer,
+                text = context.getString(R.string.detail_developer) + game!!.developer,
                 modifier = Modifier.constrainAs(developerview) {
-                    top.linkTo(publisherView.bottom, 8.dp)
+                    top.linkTo(publisherView.bottom, dimensions.spaceMedium)
                     start.linkTo(publisherView.start)
                     height = Dimension.wrapContent
 
                 },
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.LightGray,
+                color = LightGrey,
                 textAlign = TextAlign.Justify
             )
             Row(
                 modifier = Modifier.constrainAs(urlsView) {
-                    top.linkTo(developerview.bottom, 20.dp)
+                    top.linkTo(developerview.bottom, dimensions.spaceLargeExtra)
                     start.linkTo(parent.start)
                     width = Dimension.matchParent
                 }, verticalAlignment = Alignment.CenterVertically,
@@ -264,11 +269,11 @@ fun GameDetailView(
                     ),
                     contentDescription = null,
                     tint = LightGrey,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(dimensions.smallIconSize)
                 )
 
                 ClickableText(
-                    text = AnnotatedString("FreeToGame link   "),
+                    text = AnnotatedString(context.getString(R.string.detail_freetogamelink)),
                     modifier= Modifier,
                     onClick = {onFreeToGameUriClicked(game!!.freetogameProfileUrl)
                     },
@@ -282,11 +287,11 @@ fun GameDetailView(
                     ),
                     contentDescription = null,
                     tint = LightGrey,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(dimensions.smallIconSize)
                 )
 
                 ClickableText(
-                    text = AnnotatedString("Game Url "),
+                    text = AnnotatedString(context.getString(R.string.detail_game_url)),
                     modifier= Modifier,
                     onClick = {onGameUriClicked(game!!.gameUrl)
                     },
@@ -299,11 +304,11 @@ fun GameDetailView(
                 text =
                 if (game!!.toPlayString.isNullOrBlank()) ""
                 else
-                    "ToPlay description: " + game!!.toPlayString,
+                    context.getString(R.string.detail_toplay_desc) + game!!.toPlayString,
                 overflow = TextOverflow.Ellipsis,
 
                 modifier = Modifier.constrainAs(toPlayDescription) {
-                    top.linkTo(urlsView.bottom, 12.dp)
+                    top.linkTo(urlsView.bottom, dimensions.spaceMediumLarge)
                     end.linkTo(button.end)
                     start.linkTo(button.start)
                     height = Dimension.wrapContent
@@ -317,24 +322,24 @@ fun GameDetailView(
 
             Button(
                 modifier = Modifier.constrainAs(button) {
-                    top.linkTo(toPlayDescription.bottom, 16.dp)
+                    top.linkTo(toPlayDescription.bottom, dimensions.spaceLarge)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.wrapContent
                     height = Dimension.wrapContent
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (!game!!.isToPlayGame) SolidBlue else Color.White,
-                    contentColor = if (!game!!.isToPlayGame) Color.White else SolidBlue,
+                    containerColor = if (!game!!.isToPlayGame) SolidBlue else White,
+                    contentColor = if (!game!!.isToPlayGame) White else SolidBlue,
                     disabledContainerColor = LightGrey,
-                    disabledContentColor = Color.White
+                    disabledContentColor = White
                 ),
                 onClick = {
                     onAddToPlayListButtonClicked(game!!)
                 }) {
                 Text(
-                    text = if (game!!.isToPlayGame) "Quit game from toPlayList"
-                    else "Add game to ToPlay list"
+                    text = if (game!!.isToPlayGame) context.getString(R.string.quit_to_play_button)
+                    else context.getString(R.string.add_to_play_button)
                 )
             }
         }

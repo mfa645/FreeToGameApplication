@@ -12,9 +12,8 @@ val Pink40 = Color(0xFF7D5260)
 
 
 val DarkerGrey = Color(0xFF292929)
-val TransparentDarkerGrey = Color(0x1E292929)
+val White = Color.White
 val LighterDarkGrey = Color(0xFF313131)
 val Grey = Color(0xFF4B4848)
-val SolidGrey = Color(0xFF6B6969)
 val LightGrey = Color(0xFFA8A8A8)
 val SolidBlue = Color(0xFF3693F0)

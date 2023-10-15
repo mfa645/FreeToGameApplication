@@ -6,5 +6,6 @@ enum class NavigationRoutes (val route:String) {
     Description("description"),
     Detail("detail/"),
     Splash("splash"),
-    Main("main")
+    Main("main"),
+    FreeToGameUrlPage("https://www.freetogame.com/")
 }

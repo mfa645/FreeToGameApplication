@@ -39,35 +39,19 @@ fun MainActivityNavigation() {
 fun MainNavigation(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    viewModel: GamesViewModel
+    viewModel: GamesViewModel,
+    onFreeToGameUriClicked: (uri:String)->Unit,
+    onGameUriClicked: (uri:String)->Unit,
+    onFreeToGameButtonClicked:()->Unit,
+    onStartNowButtonClicked:()->Unit,
+    onGenreFilterChange:(filter:String)->Unit,
+    onPlatformFilterChange:(filter:String)->Unit,
+    onItemClickAction:(game: Game)->Unit,
+    onCancelAddGameToPlayList:()->Unit,
+    onAddToPlayListButtonClicked:(game: Game)->Unit,
+    onConfirmAddGameToPlayList:(game:Game, toPlayDesc:String)->Unit
+
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val uriHandler = LocalUriHandler.current
-
-    val onFreeToGameUriClicked= {uri :String ->
-        uriHandler.openUri(uri)
-    }
-    val onGameUriClicked= {uri :String ->
-        uriHandler.openUri(uri)
-    }
-
-    val onStartNowButtonClicked = {
-        navController.navigate(NavigationRoutes.Home.route)
-    }
-    val onFreeToGameButtonClicked = {
-        uriHandler.openUri("https://www.freetogame.com/")
-    }
-
-    val onItemClickAction = { game: Game ->
-        keyboardController?.hide()
-        if (viewModel.isSearching.value) viewModel.onSearchingToggle()
-        navController.navigate(NavigationRoutes.Detail.route + "${game.id}")
-    }
-
-    val onCancelAddGameToPlayList = {
-        keyboardController?.hide()
-        viewModel.dismissToPlayDialog()
-    }
 
     NavHost(
         navController = navController,
@@ -77,14 +61,18 @@ fun MainNavigation(
             ListView(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
-                onItemClicked = onItemClickAction
+                onItemClicked = onItemClickAction,
+                onGenreFilterChange= onGenreFilterChange,
+                onPlatformFilterChange = onPlatformFilterChange
             )
         }
         composable(route = NavigationRoutes.ToPlay.route) {
             ToPlayView(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
-                onItemClicked = onItemClickAction
+                onItemClicked = onItemClickAction,
+                onGenreFilterChange= onGenreFilterChange,
+                onPlatformFilterChange = onPlatformFilterChange
             )
         }
         composable(route = NavigationRoutes.Description.route) {
@@ -98,26 +86,8 @@ fun MainNavigation(
                     backStackEntry.arguments?.getString("gameId")
                 ),
                 onCancelAddToPlayList = onCancelAddGameToPlayList,
-                onConfirmAddGameToPlayList = { game: Game, toPlayDesc: String ->
-                    keyboardController?.hide()
-                    viewModel.dismissToPlayDialog()
-                    game.isToPlayGame = true
-                    game.toPlayString = toPlayDesc
-                    viewModel.editGame(game = game)
-                    navController.popBackStack()
-                },
-                onAddToPlayListButtonClicked = { game ->
-                    if (game.isToPlayGame) {
-                        game.isToPlayGame = false
-                        game.toPlayString = ""
-                        viewModel.editGame(game = game)
-                        navController.popBackStack()
-                    } else {
-                        game.isToPlayGame = true
-                        viewModel.showToPlayAddDialog()
-                    }
-                    KeyboardActions(onAny = { keyboardController?.hide() })
-                },
+                onConfirmAddGameToPlayList = onConfirmAddGameToPlayList,
+                onAddToPlayListButtonClicked = onAddToPlayListButtonClicked,
                 onFreeToGameUriClicked = onFreeToGameUriClicked,
                 onGameUriClicked = onGameUriClicked
             )

@@ -8,7 +8,7 @@ import com.example.model.feature.games.enums.PlatformFilter
 class GetFilteredGamesUseCase (
     private val gamesRepository : GamesRepository
 ) {
-    suspend operator fun invoke(titleFilter:String,genreFilter: GenreFilter?, platformFilter: PlatformFilter?, isToPlayGames: Boolean): List<Game> {
+    suspend operator fun invoke(titleFilter:String,genreFilter: String, platformFilter: String, isToPlayGames: Boolean): List<Game> {
         return gamesRepository.getFilteredGames(titleFilter,genreFilter,platformFilter,isToPlayGames)
     }
 }

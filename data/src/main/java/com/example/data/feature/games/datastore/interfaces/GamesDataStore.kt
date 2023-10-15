@@ -10,8 +10,8 @@ interface GamesDataStore {
     suspend fun getAllGames(): List<Game>
     suspend fun getFilteredGames(
         filterByTitle: String,
-        filterByGenre: GenreFilter?,
-        filterByPlatform: PlatformFilter?,
+        filterByGenre: String,
+        filterByPlatform: String,
         isToPlayGames: Boolean
     ): List<Game>
 

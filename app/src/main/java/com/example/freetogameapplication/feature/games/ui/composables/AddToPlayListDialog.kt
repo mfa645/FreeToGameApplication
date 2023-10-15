@@ -24,21 +24,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.DialogWindowProvider
+import com.example.freetogameapplication.R
 import com.example.freetogameapplication.ui.theme.Grey
 import com.example.freetogameapplication.ui.theme.LighterDarkGrey
 import com.example.freetogameapplication.ui.theme.SolidBlue
+import com.example.freetogameapplication.ui.theme.White
+import com.example.freetogameapplication.ui.values.LocalDim
 import com.example.model.feature.games.Game
 
 @Composable
@@ -47,6 +46,9 @@ fun ToPlayListDialog(
     onConfirm: (game: Game, toPlayDescription: String) -> Unit,
     game: Game
 ) {
+    val dimensions = LocalDim.current
+    val context = LocalContext.current
+    
     var searchString by remember {
         mutableStateOf("")
     }
@@ -59,7 +61,7 @@ fun ToPlayListDialog(
         )
     ) {
         Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = dimensions.cardElevation),
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
                 containerColor = LighterDarkGrey
@@ -72,11 +74,11 @@ fun ToPlayListDialog(
                     .padding(12.dp)
             ) {
                 MultiColorText(
-                    text1 = "Why you would like to play ",
-                    color1 = Color.White,
+                    text1 = context.getString(R.string.dialog_question_string),
+                    color1 = White,
                     text2 = "${game.title}?",
                     color2 = SolidBlue,
-                    fontSize = 20.sp,
+                    fontSize = dimensions.body,
                     fontWeight = FontWeight.Bold,
                     paddingValues = PaddingValues()
                 )
@@ -86,26 +88,29 @@ fun ToPlayListDialog(
                 BasicTextField(
                     modifier = Modifier
                         .background(color = Grey, shape = RoundedCornerShape(12.dp))
-                        .padding(end = 12.dp)
+                        .padding(end = dimensions.spaceMediumLarge)
                         .align(Alignment.CenterHorizontally)
-                        .height(40.dp)
+                        .height(dimensions.textFieldHeight)
                         .fillMaxWidth(0.95f)
-                        .padding(8.dp),
+                        .padding(dimensions.spaceMedium),
                     value = searchString,
-                    cursorBrush = SolidColor(Color.White),
-                    textStyle = TextStyle(fontSize = 16.sp, color = Color.White),
+                    cursorBrush = SolidColor(White),
+                    textStyle = TextStyle(
+                        fontSize = dimensions.smallFont,
+                        color = White
+                    ),
                     onValueChange = { newSearchString ->
                         searchString = newSearchString
                     },
                     maxLines = 5
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(dimensions.spacerHeight))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         .align(Alignment.CenterHorizontally)
-                        .padding(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        .padding(dimensions.spaceSmall),
+                    horizontalArrangement = Arrangement.spacedBy(dimensions.horizontalDefaultSpace)
                 ) {
                     Button(
                         onClick = onDismiss,
@@ -114,8 +119,8 @@ fun ToPlayListDialog(
                         )
                     ) {
                         Text(
-                            text = "Cancel",
-                            modifier = Modifier.width(50.dp),
+                            text = context.getString(R.string.cancel_button),
+                            modifier = Modifier.width(dimensions.dialogButtonsWidth),
                             textAlign = TextAlign.Center
                         )
                     }
@@ -126,8 +131,8 @@ fun ToPlayListDialog(
                         )
                     ) {
                         Text(
-                            text = "Add",
-                            modifier = Modifier.width(50.dp),
+                            text = context.getString(R.string.add_button),
+                            modifier = Modifier.width(dimensions.dialogButtonsWidth),
                             textAlign = TextAlign.Center
                         )
                     }

@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +28,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.freetogameapplication.R
 import com.example.freetogameapplication.navigation.model.NavigationRoutes
+import com.example.freetogameapplication.ui.theme.White
+import com.example.freetogameapplication.ui.values.LocalDim
 import kotlinx.coroutines.delay
 
 //TODO: TRANSLADAR las medidas y textos a values en string etc
@@ -35,6 +38,9 @@ fun SplashView(navController : NavController) {
     val scale = remember {
         Animatable(0f)
     }
+    val dimensions = LocalDim.current
+    val context = LocalContext.current
+    
     LaunchedEffect(key1 = true) {
         scale.animateTo(
             targetValue = 0.7f,
@@ -59,17 +65,17 @@ fun SplashView(navController : NavController) {
             modifier = Modifier.scale(scale.value)
         )
         Text(
-            text = "FREETOGAME",
+            text =  context.getString(R.string.topbar_app_name),
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            color = Color.White,
-            fontSize = 24.sp,
+            color = White,
+            fontSize = dimensions.subtitle,
             fontFamily = FontFamily.Monospace,
             fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.height(27.dp))
+        Spacer(modifier = Modifier.height(dimensions.spaceExtraLarge))
         CircularProgressIndicator(
-            modifier = Modifier.width(30.dp),
-            color = Color.White,
+            modifier = Modifier.width(dimensions.iconSize),
+            color = White,
             )
     }
 }

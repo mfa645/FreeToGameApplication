@@ -25,16 +25,16 @@ open class GamesViewModel(
     private val getFilteredGamesUseCase: GetFilteredGamesUseCase
 ) : ViewModel() {
 
-    private val _currentRoute = MutableStateFlow("home")
+    private val _currentRoute = MutableStateFlow(NavigationRoutes.Home.route)
     private val currentRoute = _currentRoute.asStateFlow()
 
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
 
-    private val _genreFilter = MutableStateFlow<GenreFilter?>(null)
+    private val _genreFilter = MutableStateFlow("")
     val genreFilter = _genreFilter.asStateFlow()
 
-    private val _platformFilter = MutableStateFlow<PlatformFilter?>(null)
+    private val _platformFilter = MutableStateFlow("")
     val platformFilter = _platformFilter.asStateFlow()
 
     private val _searchText = MutableStateFlow("")
@@ -96,6 +96,7 @@ open class GamesViewModel(
             }
         }
     }
+
     fun fetchFilteredToPlayGames() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -127,24 +128,24 @@ open class GamesViewModel(
 
     fun onSearchTextChange(text: String) {
         _searchText.value = text
-        if(currentRoute.value == NavigationRoutes.Home.route){
+        if (currentRoute.value == NavigationRoutes.Home.route) {
             fetchFilteredGames()
-        }else{
+        } else {
             fetchFilteredToPlayGames()
         }
     }
 
     fun onSearchingToggle() {
-        _searchText.value=""
+        _searchText.value = ""
         _isSearching.value = !isSearching.value
     }
 
-    fun showToPlayAddDialog(){
-        _showToPlayDialog.value=true
+    fun showToPlayAddDialog() {
+        _showToPlayDialog.value = true
     }
 
-    fun dismissToPlayDialog(){
-        _showToPlayDialog.value=false
+    fun dismissToPlayDialog() {
+        _showToPlayDialog.value = false
     }
 
     fun editGame(game: Game) {
@@ -155,7 +156,27 @@ open class GamesViewModel(
             }
         }
     }
-    fun setCurrentRoute(route:String){
-        _currentRoute.value=route
+
+    fun setCurrentRoute(route: String) {
+        _currentRoute.value = route
+    }
+
+    fun setPlatformFilter(filter: String) {
+        _platformFilter.value = filter
+        if(currentRoute.value==NavigationRoutes.Home.route){
+            fetchFilteredGames()
+        }
+        if(currentRoute.value==NavigationRoutes.ToPlay.route){
+            fetchFilteredToPlayGames()
+        }    }
+
+    fun setGenreFilter(filter: String) {
+        _genreFilter.value = filter
+        if(currentRoute.value==NavigationRoutes.Home.route){
+            fetchFilteredGames()
+        }
+        if(currentRoute.value==NavigationRoutes.ToPlay.route){
+            fetchFilteredToPlayGames()
+        }
     }
 }

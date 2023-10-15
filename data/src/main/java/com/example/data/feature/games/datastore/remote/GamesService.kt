@@ -14,8 +14,8 @@ interface GamesService : FreeToGameService {
 
     @GET("api/games")
     suspend fun getFilteredGames(
-        @Query("platform") platform: PlatformFilter? = PlatformFilter.PCAndWebBrowser,
-        @Query("tag") tag: GenreFilter?,
+        @Query("platform") platform: String = "all",
+        @Query("tag") tag: String,
     ): Response<List<RemoteGame>>
 
     @GET("api/game")

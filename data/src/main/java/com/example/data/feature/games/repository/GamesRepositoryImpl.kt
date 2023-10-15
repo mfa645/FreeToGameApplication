@@ -21,8 +21,8 @@ internal class GamesRepositoryImpl(
 
     override suspend fun getFilteredGames(
         filterByTitle: String,
-        filterByGenre: GenreFilter?,
-        filterByPlatform: PlatformFilter?,
+        filterByGenre: String,
+        filterByPlatform: String,
         isToPlayGames :Boolean
     ): List<Game> =
         factory.cache.getFilteredGames(filterByTitle, filterByGenre, filterByPlatform,isToPlayGames)

@@ -27,16 +27,16 @@ internal class DatabaseGameDataStoreImpl(
 
     override suspend fun getFilteredGames(
         filterByTitle: String,
-        filterByGenre: GenreFilter?,
-        filterByPlatform: PlatformFilter?,
+        filterByGenre: String,
+        filterByPlatform: String,
         isToPlayGames: Boolean
     ): List<Game> {
         if (isToPlayGames) {
             return this@DatabaseGameDataStoreImpl.appDatabase.gamesDao()
                 .getFilteredToPlayGames(
                     filterTitle = filterByTitle,
-                    genreFilter = filterByGenre?.filter ?: "%%",
-                    platformFilter = filterByPlatform?.filter ?: "%%",
+                    genreFilter = filterByGenre.ifBlank { "%%" },
+                    platformFilter = filterByPlatform.ifBlank { "%%" },
                     isToPlayGame = true
                 ).map { databaseGame ->
                     databaseGame.toDomain()
@@ -45,8 +45,8 @@ internal class DatabaseGameDataStoreImpl(
             return this@DatabaseGameDataStoreImpl.appDatabase.gamesDao()
                 .getFilteredGames(
                     filterTitle = filterByTitle,
-                    genreFilter = filterByGenre?.filter ?: "%%",
-                    platformFilter = filterByPlatform?.filter ?: "%%",
+                    genreFilter = filterByGenre.ifBlank { "%%" },
+                    platformFilter = filterByPlatform.ifBlank { "%%" },
                 ).map { databaseGame ->
                     databaseGame.toDomain()
                 }

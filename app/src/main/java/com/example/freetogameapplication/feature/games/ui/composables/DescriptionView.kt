@@ -1,14 +1,11 @@
 package com.example.freetogameapplication.feature.games.ui.composables
 
-import android.graphics.ColorMatrixColorFilter
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,11 +15,11 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -31,11 +28,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import com.example.freetogameapplication.R
-import com.example.freetogameapplication.ui.theme.DarkerGrey
 import com.example.freetogameapplication.ui.theme.LightGrey
 import com.example.freetogameapplication.ui.theme.SolidBlue
-import com.example.freetogameapplication.ui.theme.SolidGrey
-import com.example.freetogameapplication.ui.theme.TransparentDarkerGrey
+import com.example.freetogameapplication.ui.theme.White
+import com.example.freetogameapplication.ui.values.LocalDim
 
 
 @Composable
@@ -45,6 +41,8 @@ fun DescriptionView(
     onFreeToGameButtonClicked: () -> Unit,
 
 ) {
+    val dimensions = LocalDim.current
+    val context = LocalContext.current
     ConstraintLayout(
         modifier = Modifier
             .padding(paddingValues)
@@ -63,7 +61,7 @@ fun DescriptionView(
         AsyncImage(model = R.drawable.img_description_wallpaper,
             contentDescription = "",
             contentScale = ContentScale.Crop,
-            alpha = 0.5f,
+            alpha = 0.3f,
             colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }),
             modifier = Modifier.constrainAs(background) {
                 top.linkTo(parent.top)
@@ -75,44 +73,44 @@ fun DescriptionView(
             })
 
         Text(
-            text = "FREETOGAME APPLICATION!",
+            text = context.getString(R.string.descriptionview_title),
             modifier = Modifier
                 .constrainAs(title) {
-                    top.linkTo(parent.top, 42.dp)
+                    top.linkTo(parent.top, dimensions.spaceExtraLarge)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 },
-            fontSize = 40.sp,
+            fontSize = dimensions.bigTitle,
             color = SolidBlue,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             lineHeight = 45.sp,
         )
         Text(
-            text = "Track your favourite games, make a list of what to play and search for more!",
+            text = context.getString(R.string.descriptionview_subtitle),
             modifier = Modifier
                 .constrainAs(subtitle) {
-                    top.linkTo(title.bottom, 16.dp)
+                    top.linkTo(title.bottom, dimensions.spaceLarge)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.percent(0.9f)
                 },
             textAlign = TextAlign.Justify,
             fontWeight = FontWeight.Bold,
-            fontSize = 26.sp,
+            fontSize = dimensions.subtitle,
             lineHeight = 32.sp,
-            color = Color.White,
+            color = White,
         )
         Text(
-            text = "FreeToGame application allows you to discover all the best Free-to-Play Multiplayer Games and MMO Games into one place, letting you make a personalized list of your own games library.",
+            text = context.getString(R.string.descriptionview_body),
             modifier = Modifier
                 .constrainAs(body) {
-                    top.linkTo(subtitle.bottom, 16.dp)
+                    top.linkTo(subtitle.bottom, dimensions.spaceLarge)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.percent(0.9f)
                 },
-            fontSize = 20.sp,
+            fontSize = dimensions.body,
             color = LightGrey,
             lineHeight = 35.sp,
             textAlign = TextAlign.Justify,
@@ -120,38 +118,38 @@ fun DescriptionView(
 
         Row(
             modifier = Modifier.constrainAs(buttonsView) {
-                top.linkTo(body.bottom, 16.dp)
+                top.linkTo(body.bottom, dimensions.spaceLarge)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 width = Dimension.wrapContent
                 height = Dimension.wrapContent
             },
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(dimensions.horizontalDefaultSpace)
         ) {
             Button(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = SolidBlue,
-                    contentColor = Color.White,
+                    contentColor = White,
                     disabledContainerColor = LightGrey,
-                    disabledContentColor = Color.White
+                    disabledContentColor = White
                 ),
                 onClick =
                 onButtonClicked
             ) {
                 Text(
-                    text = "Start Now!",
-                    fontSize = 20.sp
+                    text = context.getString(R.string.descriptionview_start_button),
+                    fontSize = dimensions.body
                 )
             }
             OutlinedButton(
-                border = BorderStroke(0.5.dp, Color.White),
+                border = BorderStroke(0.5.dp, White),
                 shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = White),
                 onClick = onFreeToGameButtonClicked
             ) {
                 Text(
-                    text = "FreeToGame",
-                    fontSize = 20.sp
+                    text = context.getString(R.string.descriptionview_freetogame_button),
+                    fontSize = dimensions.body
                 )
             }
         }

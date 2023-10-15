@@ -1,5 +1,50 @@
 <resources>
     <string name="app_name">FreeToGameApplication</string>
+    <string name="topbar_app_name">FREETOGAME</string>
+    <string name="search_games">Search Games!</string>
+
+
+    <!--HomeList values-->
     <string name="home_title">Home</string>
+    <string name="platform">Platform</string>
+    <string name="genre">Genre</string>
+    <string name="game_notfound">The game could not be found</string>
+    <string name="gamelist_notfound">No games found!</string>
+
+    <!--detailview values-->
+    <string name="detail_addiontal_info">Additional Information</string>
+    <string name="detail_publisher">Publisher:</string>
+    <string name="detail_developer">Developer:</string>
+    <string name="detail_freetogamelink">FreeToGame link   </string>
+    <string name="detail_game_url">Game Url</string>
+    <string name="detail_toplay_desc">ToPlay description:</string>
+    <string name="toplay_games_notfound">No to play games found!</string>
+
+
+    <!--Toplay values-->
+
     <string name="toplay_title">To Play</string>
-    <string name="description_title">Description</string></resources>
+    <string name="toplay_header_one">Games you </string>
+    <string name="toplay_header_two">need to play!</string>
+
+    <!--Dialog values-->
+
+    <string name="dialog_question_string">To Play</string>
+
+    <!--Description values-->
+    <string name="description_title">Description</string>
+    <string name="descriptionview_title">FREETOGAME APPLICATION !</string>
+    <string name="descriptionview_subtitle">Track your favourite games, make a list of what to play and search for more!</string>
+    <string name="descriptionview_body">FreeToGame application allows you to discover all the best Free-to-Play Multiplayer Games and MMO Games into one place, letting you make a personalized list of your own games library.</string>
+
+
+    <!--Buttons-->
+    <string name="descriptionview_start_button">Start Now!</string>
+    <string name="descriptionview_freetogame_button">FreeToGame</string>
+    <string name="add_button">Add</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="add_to_play_button">Add game to ToPlay list</string>
+    <string name="quit_to_play_button">Quit game from toPlayList</string>
+
+    <string name="free_to_game_url">https://www.freetogame.com/</string>
+</resources>

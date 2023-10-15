@@ -17,17 +17,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.freetogameapplication.R
 import com.example.freetogameapplication.feature.games.viewmodel.GamesViewModel
 import com.example.freetogameapplication.ui.theme.DarkerGrey
 import com.example.freetogameapplication.ui.theme.SolidBlue
+import com.example.freetogameapplication.ui.theme.White
+import com.example.freetogameapplication.ui.values.LocalDim
 import com.example.model.feature.games.Game
 
 
@@ -36,37 +39,45 @@ fun ToPlayView(
     viewModel: GamesViewModel,
     paddingValues: PaddingValues,
     onItemClicked: (Game) -> Unit,
+    onGenreFilterChange:(filter:String)->Unit,
+    onPlatformFilterChange:(filter:String)->Unit
+
 ) {
+    val dimensions = LocalDim.current
+    val context = LocalContext.current
+
     viewModel.fetchFilteredToPlayGames()
     val games by viewModel.toPlayGames.collectAsState()
-    val scope = rememberCoroutineScope()
 
-    Column(modifier = Modifier.padding()) {
+    Column(
+        modifier = Modifier
+            .padding(paddingValues)
+            .background(color = DarkerGrey)
+    ) {
+        FiltersView(viewModel,onGenreFilterChange,onPlatformFilterChange)
         LazyColumn(
             modifier = Modifier
-                .padding(paddingValues)
                 .fillMaxSize()
-                .background(color = DarkerGrey)
-                .padding(top = 8.dp),
+                .padding(top = dimensions.spaceMedium),
         ) {
             item {
                 MultiColorText(
-                    text1 = "Games you ",
-                    color1 = Color.White,
-                    text2 = "need to play!",
+                    text1 = context.getString(R.string.toplay_header_one),
+                    color1 = White,
+                    text2 = " "+context.getString(R.string.toplay_header_two),
                     color2 = SolidBlue,
-                    fontSize = 20.sp,
+                    fontSize = dimensions.body,
                     fontWeight = FontWeight.Bold,
-                    paddingValues = PaddingValues(horizontal = 4.dp)
+                    paddingValues = PaddingValues(horizontal = dimensions.spaceSmall)
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(dimensions.spacerHeight))
                 if (games.isNullOrEmpty()) {
                     Text(
-                        text = "No ToPlay games found!",
-                        fontSize = 18.sp,
+                        text = context.getString(R.string.toplay_games_notfound),
+                        fontSize = dimensions.bodySmall,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        color = Color.White
+                        color = White
                     )
                 }
             }
@@ -74,7 +85,7 @@ fun ToPlayView(
                 GameItemView(modifier = Modifier.fillMaxWidth(), game = game) {
                     onItemClicked(game)
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(dimensions.spaceMedium))
             }
         }
     }

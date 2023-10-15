@@ -24,8 +24,8 @@ internal class RemoteGameDataStoreImpl(
 
     override suspend fun getFilteredGames(
         filterByTitle: String,
-        filterByGenre: GenreFilter?,
-        filterByPlatform: PlatformFilter?,
+        filterByGenre: String,
+        filterByPlatform: String,
         isToPlayGames: Boolean
     ): List<Game> {
         val result = this@RemoteGameDataStoreImpl.gamesService.getFilteredGames(
