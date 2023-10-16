@@ -1,15 +1,21 @@
 package com.example.freetogameapplication.feature.games.ui.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -24,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
@@ -47,6 +54,7 @@ import com.example.freetogameapplication.ui.values.LocalDim
 import com.example.model.feature.games.Game
 import com.example.model.feature.games.enums.PlatformFilter
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GameDetailView(
     paddingValues: PaddingValues,
@@ -55,13 +63,13 @@ fun GameDetailView(
     onAddToPlayListButtonClicked: (Game) -> Unit,
     onCancelAddToPlayList: () -> Unit,
     onConfirmAddGameToPlayList: (Game, String) -> Unit,
-    onFreeToGameUriClicked: (uri: String)->Unit,
-    onGameUriClicked: (uri: String)->Unit,
+    onFreeToGameUriClicked: (uri: String) -> Unit,
+    onGameUriClicked: (uri: String) -> Unit,
 
-) {
+    ) {
     val dimensions = LocalDim.current
     val context = LocalContext.current
-    
+
     val istoPlayDialogShown by viewModel.showToPlayDialog.collectAsState()
     viewModel.fetchGame(gameId = gameId.toInt())
     val game by viewModel.gameDetail.collectAsState()
@@ -70,6 +78,7 @@ fun GameDetailView(
         Text(text = context.getString(R.string.game_notfound), color = Color.Red)
     } else {
         val isBothPlatforms = game?.platform == PlatformFilter.PCAndWebBrowser.filter
+
         ConstraintLayout(
             modifier = Modifier
                 .padding(paddingValues)
@@ -77,46 +86,70 @@ fun GameDetailView(
                 .fillMaxHeight()
                 .background(color = DarkerGrey)
                 .padding(dimensions.spaceLarge)
+                .verticalScroll(rememberScrollState())
         )
         {
-            val (titleView,
+            val (titleGenreView,
                 description,
                 photoView,
                 platformViewFirst,
                 platformViewSecond,
                 button,
                 toPlayDescription,
-                genreView,
                 dateView,
                 publisherView,
                 developerview,
                 urlsView,
                 additionalInfoView
             ) = createRefs()
-            val endBarrier = createEndBarrier(platformViewFirst, platformViewSecond)
-
             AsyncImage(
                 model = game?.thumbnail,
                 contentDescription = null,
+                contentScale = ContentScale.FillWidth,
                 modifier = Modifier.constrainAs(photoView) {
                     top.linkTo(parent.top, dimensions.spaceSmall)
-                    width = Dimension.matchParent
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.wrapContent
                 }
             )
-            Text(
-                text = game!!.title,
-                modifier = Modifier.constrainAs(titleView) {
+            FlowRow(modifier = Modifier
+                .constrainAs(titleGenreView) {
                     top.linkTo(photoView.bottom, dimensions.spaceSmall)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
                     height = Dimension.wrapContent
-                },
-                style = MaterialTheme.typography.titleLarge,
-                color = White,
-                fontSize = dimensions.titleDetail
-            )
+                }, horizontalArrangement = Arrangement.spacedBy(dimensions.spaceSmall)) {
+                Text(
+                    text = game!!.title,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = White,
+                    fontSize = dimensions.titleDetail
+                )
+                Card(
+                    shape = RoundedCornerShape(dimensions.horizontalDefaultSpace),
+                    colors = CardDefaults.cardColors(containerColor = LightGrey),
+                    elevation = CardDefaults.cardElevation(defaultElevation = dimensions.cardElevation),
+                    modifier = Modifier
+                        .padding(dimensions.spaceSmall)
+                ) {
+                    Text(
+                        text = game!!.genre,
+                        color = DarkerGrey,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = dimensions.genreDetail,
+                        modifier = Modifier.padding(dimensions.spaceSmall)
+                    )
+                }
+            }
+
             Row(
                 modifier = Modifier.constrainAs(platformViewFirst) {
-                    top.linkTo(titleView.bottom, dimensions.spaceMediumLarge)
-                    start.linkTo(titleView.start)
+                    top.linkTo(titleGenreView.bottom, dimensions.spaceMediumLarge)
+                    start.linkTo(titleGenreView.start)
                 },
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -145,7 +178,7 @@ fun GameDetailView(
             if (isBothPlatforms) {
                 Row(
                     modifier = Modifier.constrainAs(platformViewSecond) {
-                        top.linkTo(titleView.bottom, dimensions.spaceMedium)
+                        top.linkTo(titleGenreView.bottom, dimensions.spaceMedium)
                         start.linkTo(platformViewFirst.end, dimensions.spaceMedium)
                     }, verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -161,36 +194,15 @@ fun GameDetailView(
                     )
                 }
             }
-            Card(shape = RoundedCornerShape(dimensions.horizontalDefaultSpace),
-                colors = CardDefaults.cardColors(containerColor = LightGrey),
-                elevation = CardDefaults.cardElevation(defaultElevation = dimensions.cardElevation),
-                modifier = Modifier
-                    .constrainAs(genreView) {
-                        start.linkTo(titleView.end, dimensions.spaceMedium)
-                        top.linkTo(titleView.top)
-                        width = Dimension.wrapContent
-                        height = Dimension.wrapContent
 
-                    }
-                    .padding(4.dp)) {
-                Text(
-                    text = game!!.genre,
-                    color = DarkerGrey,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(dimensions.spaceSmall)
-                )
-            }
 
             Text(
                 text = game!!.shortDescription,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.constrainAs(description) {
-                    top.linkTo(platformViewFirst.bottom,dimensions.spaceMedium)
+                    top.linkTo(platformViewFirst.bottom, dimensions.spaceMedium)
                     width = Dimension.matchParent
                     height = Dimension.wrapContent
-
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 color = LightGrey,
@@ -274,10 +286,11 @@ fun GameDetailView(
 
                 ClickableText(
                     text = AnnotatedString(context.getString(R.string.detail_freetogamelink)),
-                    modifier= Modifier,
-                    onClick = {onFreeToGameUriClicked(game!!.freetogameProfileUrl)
+                    modifier = Modifier,
+                    onClick = {
+                        onFreeToGameUriClicked(game!!.freetogameProfileUrl)
                     },
-                    style = TextStyle(color= LightGrey, fontWeight = FontWeight.Bold)
+                    style = TextStyle(color = LightGrey, fontWeight = FontWeight.Bold)
 
                 )
 
@@ -292,10 +305,11 @@ fun GameDetailView(
 
                 ClickableText(
                     text = AnnotatedString(context.getString(R.string.detail_game_url)),
-                    modifier= Modifier,
-                    onClick = {onGameUriClicked(game!!.gameUrl)
+                    modifier = Modifier,
+                    onClick = {
+                        onGameUriClicked(game!!.gameUrl)
                     },
-                    style = TextStyle(color= LightGrey, fontWeight = FontWeight.Bold)
+                    style = TextStyle(color = LightGrey, fontWeight = FontWeight.Bold)
 
                 )
 

@@ -138,6 +138,9 @@ fun MainView(viewModel: GamesViewModel = koinViewModel()) {
                 viewModel = viewModel,
                 onAppButtonClicked = {
                     viewModel.setCurrentRoute(NavigationRoutes.Home.route)
+                    if (viewModel.isSearching.value) viewModel.onSearchingToggle()
+                    viewModel.setGenreFilter("")
+                    viewModel.setPlatformFilter("")
                     navController.navigate(NavigationRoutes.Home.route)
                 },
                 onSearchTextChange = onSearchTextChange,

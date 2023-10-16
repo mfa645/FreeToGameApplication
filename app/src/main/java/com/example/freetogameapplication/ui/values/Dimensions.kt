@@ -30,7 +30,7 @@ data class  MyDimensions(
     val body: TextUnit = 20.sp,
     val smallFont: TextUnit = 16.sp,
     val titleDetail: TextUnit = 24.sp,
-
+    val genreDetail: TextUnit = 14.sp,
     //Icon
     val iconSize: Dp = 30.dp,
     val smallIconSize: Dp = 20.dp,
