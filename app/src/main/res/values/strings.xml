@@ -23,7 +23,7 @@
 
     <!--Toplay values-->
 
-    <string name="toplay_title">To Play</string>
+    <string name="toplay_title">Want To Play</string>
     <string name="toplay_header_one">Games you </string>
     <string name="toplay_header_two">need to play!</string>
 

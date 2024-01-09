@@ -33,12 +33,12 @@ fun ListView(
     viewModel: GamesViewModel,
     paddingValues: PaddingValues,
     onItemClicked: (Game) -> Unit,
-    onGenreFilterChange:(filter:String)->Unit,
-    onPlatformFilterChange:(filter:String)->Unit
+    onGenreFilterChange: (filter: String) -> Unit,
+    onPlatformFilterChange: (filter: String) -> Unit
 ) {
     val dimensions = LocalDim.current
     val context = LocalContext.current
-    
+
     //val games by viewModel.games.collectAsState()
     val pagedGames = viewModel.paginatedGames.collectAsLazyPagingItems()
 
@@ -49,7 +49,7 @@ fun ListView(
             .background(color = DarkerGrey)
     ) {
 
-        FiltersView(viewModel,onGenreFilterChange,onPlatformFilterChange )
+        FiltersView(viewModel, onGenreFilterChange, onPlatformFilterChange)
 
         if (pagedGames.itemCount == 0) {
             Spacer(modifier = Modifier.height(dimensions.spacerLargeHeight))
@@ -66,18 +66,16 @@ fun ListView(
                 .fillMaxSize()
                 .padding(top = dimensions.spaceMedium),
         ) {
-            pagedGames?.let {
-                items(
-                    count = it.itemCount,
-                    key = pagedGames.itemKey { game -> game.id }
-                ) { gameIndex ->
-                    print(gameIndex)
-                    pagedGames[gameIndex]?.let{ item ->
-                        GameItemView(modifier = Modifier.fillMaxWidth(), game = item) {game ->
-                            onItemClicked(game)
-                        }
-                        Spacer(modifier = Modifier.height(dimensions.spaceMedium))
+            items(
+                count = pagedGames.itemCount,
+                key = pagedGames.itemKey { game -> game.id }
+            ) { gameIndex ->
+                print(gameIndex)
+                pagedGames[gameIndex]?.let { item ->
+                    GameItemView(modifier = Modifier.fillMaxWidth(), game = item) { game ->
+                        onItemClicked(game)
                     }
+                    Spacer(modifier = Modifier.height(dimensions.spaceMedium))
                 }
             }
         }

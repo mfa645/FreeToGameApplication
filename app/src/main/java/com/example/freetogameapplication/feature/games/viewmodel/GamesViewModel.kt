@@ -51,14 +51,12 @@ open class GamesViewModel(
     private val _gameDetail = MutableStateFlow<Game?>(null)
     val gameDetail = _gameDetail.asStateFlow()
 
-    private val _games = MutableStateFlow(listOf<Game>())
-    val games = _games.asStateFlow()
-
     private val _paginatedGames: MutableStateFlow<PagingData<Game>> = MutableStateFlow(value = PagingData.empty())
     val paginatedGames: StateFlow<PagingData<Game>> get() = _paginatedGames
 
-    private val _toPlayGames = MutableStateFlow(listOf<Game>())
-    val toPlayGames = _toPlayGames.asStateFlow()
+    private val _paginatedToPlayGames: MutableStateFlow<PagingData<Game>> = MutableStateFlow(value = PagingData.empty())
+    val paginatedToPlayGames: StateFlow<PagingData<Game>> get() = _paginatedToPlayGames
+
 
     init {
         fetchApiGames()
@@ -107,18 +105,18 @@ open class GamesViewModel(
 
     fun fetchFilteredToPlayGames() {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val filteredData = getFilteredGamesUseCase(
-                    searchText.value,
-                    genreFilter.value,
-                    platformFilter.value,
-                    isToPlayGames = true
-                )
-                withContext(Dispatchers.Main) {
-                    _toPlayGames.value = filteredData
+            getFilteredGamesUseCase(
+                limit = 20,
+                searchText.value,
+                genreFilter.value,
+                platformFilter.value,
+                isToPlayGames = true
+            )
+                .distinctUntilChanged()
+                .cachedIn(viewModelScope)
+                .collect{
+                    _paginatedToPlayGames.value = it
                 }
-            } catch (e: Exception) {
-            }
         }
     }
 

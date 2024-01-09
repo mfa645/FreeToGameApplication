@@ -25,6 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.example.freetogameapplication.R
 import com.example.freetogameapplication.feature.games.viewmodel.GamesViewModel
 import com.example.freetogameapplication.ui.theme.DarkerGrey
@@ -39,22 +41,22 @@ fun ToPlayView(
     viewModel: GamesViewModel,
     paddingValues: PaddingValues,
     onItemClicked: (Game) -> Unit,
-    onGenreFilterChange:(filter:String)->Unit,
-    onPlatformFilterChange:(filter:String)->Unit
+    onGenreFilterChange: (filter: String) -> Unit,
+    onPlatformFilterChange: (filter: String) -> Unit
 
 ) {
     val dimensions = LocalDim.current
     val context = LocalContext.current
 
     viewModel.fetchFilteredToPlayGames()
-    val games by viewModel.toPlayGames.collectAsState()
+    val games = viewModel.paginatedToPlayGames.collectAsLazyPagingItems()
 
     Column(
         modifier = Modifier
             .padding(paddingValues)
             .background(color = DarkerGrey)
     ) {
-        FiltersView(viewModel,onGenreFilterChange,onPlatformFilterChange)
+        FiltersView(viewModel, onGenreFilterChange, onPlatformFilterChange)
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -64,14 +66,14 @@ fun ToPlayView(
                 MultiColorText(
                     text1 = context.getString(R.string.toplay_header_one),
                     color1 = White,
-                    text2 = " "+context.getString(R.string.toplay_header_two),
+                    text2 = " " + context.getString(R.string.toplay_header_two),
                     color2 = SolidBlue,
                     fontSize = dimensions.body,
                     fontWeight = FontWeight.Bold,
                     paddingValues = PaddingValues(horizontal = dimensions.spaceSmall)
                 )
                 Spacer(modifier = Modifier.height(dimensions.spacerHeight))
-                if (games.isNullOrEmpty()) {
+                if (games.itemCount == 0) {
                     Text(
                         text = context.getString(R.string.toplay_games_notfound),
                         fontSize = dimensions.bodySmall,
@@ -81,11 +83,17 @@ fun ToPlayView(
                     )
                 }
             }
-            items(games) { game ->
-                GameItemView(modifier = Modifier.fillMaxWidth(), game = game) {
-                    onItemClicked(game)
+            items(
+                count = games.itemCount,
+                key = games.itemKey { game -> game.id }
+            ) { gameIndex ->
+                print(gameIndex)
+                games[gameIndex]?.let { item ->
+                    GameItemView(modifier = Modifier.fillMaxWidth(), game = item) { game ->
+                        onItemClicked(game)
+                    }
+                    Spacer(modifier = Modifier.height(dimensions.spaceMedium))
                 }
-                Spacer(modifier = Modifier.height(dimensions.spaceMedium))
             }
         }
     }
