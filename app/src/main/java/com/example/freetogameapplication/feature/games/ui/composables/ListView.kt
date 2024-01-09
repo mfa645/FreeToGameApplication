@@ -51,7 +51,7 @@ fun ListView(
 
         FiltersView(viewModel,onGenreFilterChange,onPlatformFilterChange )
 
-        if (pagedGames == null) {
+        if (pagedGames.itemCount == 0) {
             Spacer(modifier = Modifier.height(dimensions.spacerLargeHeight))
             Text(
                 text = context.getString(R.string.gamelist_notfound),

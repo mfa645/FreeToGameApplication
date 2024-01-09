@@ -15,11 +15,9 @@ import com.example.domain.feature.games.GetGameUseCase
 import com.example.freetogameapplication.navigation.model.NavigationRoutes
 import com.example.model.feature.games.Game
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -57,7 +55,7 @@ open class GamesViewModel(
     val games = _games.asStateFlow()
 
     private val _paginatedGames: MutableStateFlow<PagingData<Game>> = MutableStateFlow(value = PagingData.empty())
-    val paginatedGames: MutableStateFlow<PagingData<Game>> get() = _paginatedGames
+    val paginatedGames: StateFlow<PagingData<Game>> get() = _paginatedGames
 
     private val _toPlayGames = MutableStateFlow(listOf<Game>())
     val toPlayGames = _toPlayGames.asStateFlow()

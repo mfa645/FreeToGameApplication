@@ -223,7 +223,6 @@ fun MyTopBar(
             ),
         title = {},
         navigationIcon = {
-
             Row {
                 Image(
                     painter = painterResource(id = R.drawable.ic_game_console),
