@@ -5,8 +5,6 @@ import com.example.data.feature.games.datastore.interfaces.GamesDataStore
 import com.example.data.feature.games.datastore.mappers.toDomain
 import com.example.data.feature.games.datastore.remote.GamesService
 import com.example.model.feature.games.Game
-import com.example.model.feature.games.enums.GenreFilter
-import com.example.model.feature.games.enums.PlatformFilter
 
 internal class RemoteGameDataStoreImpl(
     private val gamesService: GamesService
@@ -19,6 +17,25 @@ internal class RemoteGameDataStoreImpl(
                 game.toDomain()
             } ?: emptyList())
 
+        return emptyList()
+    }
+
+    override suspend fun getFilteredGames(
+        limit: Int,
+        page: Int,
+        filterByTitle: String,
+        filterByGenre: String,
+        filterByPlatform: String,
+        isToPlayGames: Boolean
+    ): List<Game> {
+        val result = this@RemoteGameDataStoreImpl.gamesService.getFilteredGames(
+            platform = filterByPlatform,
+            tag = filterByGenre,
+        )
+        if (result.isSuccessful)
+            return (result.body()?.map { game ->
+                game.toDomain()
+            } ?: emptyList())
         return emptyList()
     }
 
@@ -36,8 +53,7 @@ internal class RemoteGameDataStoreImpl(
             return (result.body()?.map { game ->
                 game.toDomain()
             } ?: emptyList())
-        return emptyList()
-    }
+        return emptyList()    }
 
     override suspend fun getGameById(gameId: Int): Game {
         val result = this@RemoteGameDataStoreImpl.gamesService.getGameById(gameId)

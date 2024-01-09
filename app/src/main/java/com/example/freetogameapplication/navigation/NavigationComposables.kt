@@ -1,11 +1,8 @@
 package com.example.freetogameapplication.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -40,16 +37,16 @@ fun MainNavigation(
     navController: NavHostController,
     paddingValues: PaddingValues,
     viewModel: GamesViewModel,
-    onFreeToGameUriClicked: (uri:String)->Unit,
-    onGameUriClicked: (uri:String)->Unit,
-    onFreeToGameButtonClicked:()->Unit,
-    onStartNowButtonClicked:()->Unit,
-    onGenreFilterChange:(filter:String)->Unit,
-    onPlatformFilterChange:(filter:String)->Unit,
-    onItemClickAction:(game: Game)->Unit,
-    onCancelAddGameToPlayList:()->Unit,
-    onAddToPlayListButtonClicked:(game: Game)->Unit,
-    onConfirmAddGameToPlayList:(game:Game, toPlayDesc:String)->Unit
+    onFreeToGameUriClicked: (uri: String) -> Unit,
+    onGameUriClicked: (uri: String) -> Unit,
+    onFreeToGameButtonClicked: () -> Unit,
+    onStartNowButtonClicked: () -> Unit,
+    onGenreFilterChange: (filter: String) -> Unit,
+    onPlatformFilterChange: (filter: String) -> Unit,
+    onItemClickAction: (game: Game) -> Unit,
+    onCancelAddGameToPlayList: () -> Unit,
+    onAddToPlayListButtonClicked: (game: Game) -> Unit,
+    onConfirmAddGameToPlayList: (game: Game, toPlayDesc: String) -> Unit
 
 ) {
 
@@ -62,7 +59,7 @@ fun MainNavigation(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
                 onItemClicked = onItemClickAction,
-                onGenreFilterChange= onGenreFilterChange,
+                onGenreFilterChange = onGenreFilterChange,
                 onPlatformFilterChange = onPlatformFilterChange
             )
         }
@@ -71,20 +68,21 @@ fun MainNavigation(
                 viewModel = viewModel,
                 paddingValues = paddingValues,
                 onItemClicked = onItemClickAction,
-                onGenreFilterChange= onGenreFilterChange,
+                onGenreFilterChange = onGenreFilterChange,
                 onPlatformFilterChange = onPlatformFilterChange
             )
         }
         composable(route = NavigationRoutes.Description.route) {
             DescriptionView(paddingValues, onStartNowButtonClicked, onFreeToGameButtonClicked)
         }
-        composable(route = NavigationRoutes.Detail.route + "{gameId}") { backStackEntry ->
+        composable(
+            route = NavigationRoutes.Detail.route,
+        ) { backStackEntry ->
             GameDetailView(
                 paddingValues = paddingValues,
                 viewModel = viewModel,
-                gameId = desCurlyBracketizeArg(
-                    backStackEntry.arguments?.getString("gameId")
-                ),
+                gameId =
+                backStackEntry.arguments?.getString("gameId").orEmpty(),
                 onCancelAddToPlayList = onCancelAddGameToPlayList,
                 onConfirmAddGameToPlayList = onConfirmAddGameToPlayList,
                 onAddToPlayListButtonClicked = onAddToPlayListButtonClicked,
@@ -93,10 +91,4 @@ fun MainNavigation(
             )
         }
     }
-}
-
-fun desCurlyBracketizeArg(string: String?): String {
-    if (string == null) return ""
-    val result = string.replace("{", "")
-    return result.replace("}", "")
 }

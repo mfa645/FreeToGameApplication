@@ -1,7 +1,12 @@
 package com.example.freetogameapplication.feature.games.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.domain.feature.games.AddGamesUseCase
 import com.example.domain.feature.games.AllGamesUseCase
 import com.example.domain.feature.games.EditGameUseCase
@@ -9,11 +14,13 @@ import com.example.domain.feature.games.GetFilteredGamesUseCase
 import com.example.domain.feature.games.GetGameUseCase
 import com.example.freetogameapplication.navigation.model.NavigationRoutes
 import com.example.model.feature.games.Game
-import com.example.model.feature.games.enums.GenreFilter
-import com.example.model.feature.games.enums.PlatformFilter
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -49,6 +56,9 @@ open class GamesViewModel(
     private val _games = MutableStateFlow(listOf<Game>())
     val games = _games.asStateFlow()
 
+    private val _paginatedGames: MutableStateFlow<PagingData<Game>> = MutableStateFlow(value = PagingData.empty())
+    val paginatedGames: MutableStateFlow<PagingData<Game>> get() = _paginatedGames
+
     private val _toPlayGames = MutableStateFlow(listOf<Game>())
     val toPlayGames = _toPlayGames.asStateFlow()
 
@@ -57,10 +67,21 @@ open class GamesViewModel(
         fetchGames()
     }
 
+    private fun fetchGames() {
+        viewModelScope.launch(Dispatchers.IO) {
+            allGamesUseCase(limit=20)
+                .distinctUntilChanged()
+                .cachedIn(viewModelScope)
+                .collect{
+                _paginatedGames.value = it
+            }
+        }
+    }
+
     private fun fetchApiGames() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val apiData = allGamesUseCase.invoke(isLocal = false)
+                val apiData = allGamesUseCase(isLocal = false)
                 addGamesUseCase.invoke(*apiData.toTypedArray())
             } catch (e: Exception) {
 
@@ -68,39 +89,28 @@ open class GamesViewModel(
         }
     }
 
-    private fun fetchGames() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val localData = allGamesUseCase.invoke(isLocal = true)
-                withContext(Dispatchers.Main) {
-                    _games.value = localData
-                }
-            } catch (e: Exception) {
-            }
-        }
-    }
-
     private fun fetchFilteredGames() {
+
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val filteredData = getFilteredGamesUseCase.invoke(
-                    searchText.value,
-                    genreFilter.value,
-                    platformFilter.value,
-                    isToPlayGames = false
-                )
-                withContext(Dispatchers.Main) {
-                    _games.value = filteredData
+            getFilteredGamesUseCase(
+                limit = 20,
+                searchText.value,
+                genreFilter.value,
+                platformFilter.value,
+                isToPlayGames = false
+            )
+                .distinctUntilChanged()
+                .cachedIn(viewModelScope)
+                .collect{
+                    _paginatedGames.value = it
                 }
-            } catch (e: Exception) {
-            }
         }
     }
 
     fun fetchFilteredToPlayGames() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val filteredData = getFilteredGamesUseCase.invoke(
+                val filteredData = getFilteredGamesUseCase(
                     searchText.value,
                     genreFilter.value,
                     platformFilter.value,
@@ -117,7 +127,7 @@ open class GamesViewModel(
     fun fetchGame(gameId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val data = getGameUseCase.invoke(gameId)
+                val data = getGameUseCase(gameId)
                 withContext(Dispatchers.Main) {
                     _gameDetail.value = data
                 }
@@ -151,7 +161,7 @@ open class GamesViewModel(
     fun editGame(game: Game) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                editGameUseCase.invoke(game)
+                editGameUseCase(game)
             } catch (e: Exception) {
             }
         }
@@ -163,19 +173,20 @@ open class GamesViewModel(
 
     fun setPlatformFilter(filter: String) {
         _platformFilter.value = filter
-        if(currentRoute.value==NavigationRoutes.Home.route){
+        if (currentRoute.value == NavigationRoutes.Home.route) {
             fetchFilteredGames()
         }
-        if(currentRoute.value==NavigationRoutes.ToPlay.route){
+        if (currentRoute.value == NavigationRoutes.ToPlay.route) {
             fetchFilteredToPlayGames()
-        }    }
+        }
+    }
 
     fun setGenreFilter(filter: String) {
         _genreFilter.value = filter
-        if(currentRoute.value==NavigationRoutes.Home.route){
+        if (currentRoute.value == NavigationRoutes.Home.route) {
             fetchFilteredGames()
         }
-        if(currentRoute.value==NavigationRoutes.ToPlay.route){
+        if (currentRoute.value == NavigationRoutes.ToPlay.route) {
             fetchFilteredToPlayGames()
         }
     }

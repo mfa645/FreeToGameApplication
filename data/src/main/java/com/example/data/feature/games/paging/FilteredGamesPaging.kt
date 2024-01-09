@@ -8,8 +8,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-open class GamesPaging(
-    private val repository: GamesRepository
+open class FilteredGamesPaging(
+    private val repository: GamesRepository,
+    private val filterByTitle: String,
+    private val filterByGenre: String,
+    private val filterByPlatform: String,
+    private val isToPlayGames: Boolean,
 ): PagingSource<Int, Game>() {
     //En vistas clásicas se utiliza PagingDataAdapter
     //================================================
@@ -30,9 +34,13 @@ open class GamesPaging(
                 Timber.tag("Paging").i("Page: $page")
                 // Puede ser un flow, o una suspend que se traiga cosas de cualquier sitio,
                 // es un repositorio, por tanto...
-                val response = repository.getAllGames(
-                    page = page,
-                    limit = limit
+                val response = repository.getFilteredGames(
+                    limit = limit,
+                    page= page,
+                    filterByTitle =  filterByTitle,
+                    filterByGenre =  filterByGenre,
+                    filterByPlatform =  filterByPlatform,
+                    isToPlayGames =  isToPlayGames
                 )
 
                 LoadResult.Page(

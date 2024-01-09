@@ -9,6 +9,14 @@ interface GamesDataStore {
     suspend fun getAllGames(page:Int,limit:Int): List<Game>
     suspend fun getAllGames(): List<Game>
     suspend fun getFilteredGames(
+        limit: Int,
+        page:Int,
+        filterByTitle: String,
+        filterByGenre: String,
+        filterByPlatform: String,
+        isToPlayGames: Boolean
+    ): List<Game>
+    suspend fun getFilteredGames(
         filterByTitle: String,
         filterByGenre: String,
         filterByPlatform: String,

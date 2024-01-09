@@ -9,8 +9,8 @@ import com.example.model.feature.games.enums.PlatformFilter
 internal class GamesRepositoryImpl(
     private val factory: GameFactory
 ) : GamesRepository {
-    override suspend fun getAllGames(page: Int): List<Game> =
-        factory.cache.getAllGames()
+    override suspend fun getAllGames(page: Int, limit: Int): List<Game> =
+        factory.cache.getAllGames(page, limit)
 
     override suspend fun getAllGames(isLocal: Boolean): List<Game> =
             if (isLocal) {
@@ -18,14 +18,25 @@ internal class GamesRepositoryImpl(
             } else
                 factory.remote.getAllGames()
 
+    override suspend fun getFilteredGames(
+        filterByTitle: String,
+        filterByGenre: String,
+        filterByPlatform: String,
+        isToPlayGames: Boolean
+    ): List<Game> =
+        factory.cache.getFilteredGames(filterByTitle, filterByGenre, filterByPlatform,isToPlayGames)
+
+
 
     override suspend fun getFilteredGames(
+        limit: Int,
+        page: Int,
         filterByTitle: String,
         filterByGenre: String,
         filterByPlatform: String,
         isToPlayGames :Boolean
     ): List<Game> =
-        factory.cache.getFilteredGames(filterByTitle, filterByGenre, filterByPlatform,isToPlayGames)
+        factory.cache.getFilteredGames(limit,page, filterByTitle, filterByGenre, filterByPlatform,isToPlayGames)
 
     override suspend fun getGameById(gameId: Int): Game = factory.cache.getGameById(gameId)
 

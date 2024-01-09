@@ -26,6 +26,40 @@ internal class DatabaseGameDataStoreImpl(
     }
 
     override suspend fun getFilteredGames(
+        limit:Int,
+        page:Int,
+        filterByTitle: String,
+        filterByGenre: String,
+        filterByPlatform: String,
+        isToPlayGames: Boolean
+    ): List<Game> {
+        if (isToPlayGames) {
+            return this@DatabaseGameDataStoreImpl.appDatabase.gamesDao()
+                .getFilteredPagedToPlayGames(
+                    limit = limit,
+                    page=page,
+                    filterTitle = filterByTitle,
+                    genreFilter = filterByGenre.ifBlank { "%%" },
+                    platformFilter = filterByPlatform.ifBlank { "%%" },
+                    isToPlayGame = true
+                ).map { databaseGame ->
+                    databaseGame.toDomain()
+                }
+        } else {
+            return this@DatabaseGameDataStoreImpl.appDatabase.gamesDao()
+                .getFilteredPagedGames(
+                    limit = limit,
+                    page=page,
+                    filterTitle = filterByTitle,
+                    genreFilter = filterByGenre.ifBlank { "%%" },
+                    platformFilter = filterByPlatform.ifBlank { "%%" },
+                ).map { databaseGame ->
+                    databaseGame.toDomain()
+                }
+        }
+    }
+
+    override suspend fun getFilteredGames(
         filterByTitle: String,
         filterByGenre: String,
         filterByPlatform: String,
@@ -50,8 +84,7 @@ internal class DatabaseGameDataStoreImpl(
                 ).map { databaseGame ->
                     databaseGame.toDomain()
                 }
-        }
-    }
+        }    }
 
     override suspend fun getGameById(gameId: Int): Game {
         val result = this@DatabaseGameDataStoreImpl.appDatabase.gamesDao().getGameById(gameId)

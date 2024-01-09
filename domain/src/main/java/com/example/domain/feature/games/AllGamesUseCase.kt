@@ -25,5 +25,4 @@ class AllGamesUseCase(
     suspend operator fun invoke(isLocal: Boolean): List<Game> {
         return gamesRepository.getAllGames(isLocal)
     }
-
 }

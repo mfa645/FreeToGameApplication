@@ -76,7 +76,7 @@ fun ToPlayListDialog(
                 MultiColorText(
                     text1 = context.getString(R.string.dialog_question_string),
                     color1 = White,
-                    text2 = "${game.title}?",
+                    text2 = " ${game.title}?",
                     color2 = SolidBlue,
                     fontSize = dimensions.body,
                     fontWeight = FontWeight.Bold,

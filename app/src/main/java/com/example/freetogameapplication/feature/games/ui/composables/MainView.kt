@@ -58,9 +58,10 @@ import com.example.freetogameapplication.ui.theme.SolidBlue
 import com.example.freetogameapplication.ui.theme.White
 import com.example.freetogameapplication.ui.values.LocalDim
 import com.example.model.feature.games.Game
+import org.koin.androidx.compose.inject
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MainView(viewModel: GamesViewModel = koinViewModel()) {
     val navController = rememberNavController()
@@ -101,7 +102,7 @@ fun MainView(viewModel: GamesViewModel = koinViewModel()) {
     val onItemClickAction = { game: Game ->
         keyboardController?.hide()
         if (viewModel.isSearching.value) viewModel.onSearchingToggle()
-        navController.navigate(NavigationRoutes.Detail.route + "${game.id}")
+        navController.navigate(NavigationRoutes.Detail.createRoute(game.id.toString()))
     }
 
     val onCancelAddGameToPlayList = {
@@ -170,10 +171,12 @@ fun MainView(viewModel: GamesViewModel = koinViewModel()) {
             onItemClickAction = onItemClickAction,
             onCancelAddGameToPlayList = onCancelAddGameToPlayList,
             onAddToPlayListButtonClicked =onAddToPlayListButtonClicked,
-            onConfirmAddGameToPlayList = onConfirmAddGameToPlayList,
+            onConfirmAddGameToPlayList = onConfirmAddGameToPlayList
         )
     }
 }
+
+
 
 @Composable
 fun BottomBar(
@@ -217,7 +220,6 @@ fun MyTopBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = SolidBlue,
             titleContentColor = SolidBlue,
-
             ),
         title = {},
         navigationIcon = {

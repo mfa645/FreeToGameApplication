@@ -39,5 +39,4 @@ class MainActivity : ComponentActivity() {
             systemUiController.setNavigationBarColor(navigationBarColor)
         }
     }
-
 }
