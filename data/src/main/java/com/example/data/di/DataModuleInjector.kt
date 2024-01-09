@@ -3,7 +3,8 @@ package com.example.data.di
 import android.content.Context
 import androidx.room.Room
 import com.example.data.feature.games.datastore.cache.datastore.DatabaseGameDataStoreImpl
-import com.example.data.feature.games.datastore.interfaces.GamesDataStore
+import com.example.data.feature.games.datastore.interfaces.LocalGamesDataStore
+import com.example.data.feature.games.datastore.interfaces.RemoteGamesDataStore
 import com.example.data.feature.games.datastore.remote.GamesService
 import com.example.data.feature.games.datastore.remote.datastore.RemoteGameDataStoreImpl
 import com.example.data.feature.games.factory.GameFactory
@@ -38,11 +39,11 @@ object DataModuleInjector: KoinModuleLoader {
                 ).build()
             }
 
-            factory<GamesDataStore>(named("database")) {
+            factory<LocalGamesDataStore>(named("database")) {
                 DatabaseGameDataStoreImpl(get(named("appDatabase")))
             }
 
-            factory<GamesDataStore>(named("remote")) {
+            factory<RemoteGamesDataStore>(named("remote")) {
                 RemoteGameDataStoreImpl(get(named("gamesService")))
             }
 

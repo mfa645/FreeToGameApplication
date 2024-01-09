@@ -1,10 +1,7 @@
 package com.example.freetogameapplication.feature.games.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.domain.feature.games.AddGamesUseCase
@@ -77,8 +74,8 @@ open class GamesViewModel(
     private fun fetchApiGames() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val apiData = allGamesUseCase(isLocal = false)
-                addGamesUseCase.invoke(*apiData.toTypedArray())
+                val apiData = allGamesUseCase()
+                addGamesUseCase(*apiData.toTypedArray())
             } catch (e: Exception) {
 
             }

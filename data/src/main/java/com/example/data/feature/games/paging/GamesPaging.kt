@@ -6,14 +6,10 @@ import com.example.data.feature.games.repository.GamesRepository
 import com.example.model.feature.games.Game
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 open class GamesPaging(
     private val repository: GamesRepository
-): PagingSource<Int, Game>() {
-    //En vistas clásicas se utiliza PagingDataAdapter
-    //================================================
-
+) : PagingSource<Int, Game>() {
     override fun getRefreshKey(state: PagingState<Int, Game>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
@@ -21,20 +17,15 @@ open class GamesPaging(
         }
     }
 
-    // Aquí sí hay que tocar un poquito...
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Game> =
         try {
             withContext(Dispatchers.IO) {
                 val page = params.key ?: 0
                 val limit = params.loadSize
-                Timber.tag("Paging").i("Page: $page")
-                // Puede ser un flow, o una suspend que se traiga cosas de cualquier sitio,
-                // es un repositorio, por tanto...
                 val response = repository.getAllGames(
                     page = page,
                     limit = limit
                 )
-
                 LoadResult.Page(
                     data = response,
                     prevKey = if (page == 0) null else page.minus(1),

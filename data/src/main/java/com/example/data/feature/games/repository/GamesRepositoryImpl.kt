@@ -3,8 +3,6 @@ package com.example.data.feature.games.repository
 import com.example.data.feature.games.datastore.mappers.toDatabase
 import com.example.data.feature.games.factory.GameFactory
 import com.example.model.feature.games.Game
-import com.example.model.feature.games.enums.GenreFilter
-import com.example.model.feature.games.enums.PlatformFilter
 
 internal class GamesRepositoryImpl(
     private val factory: GameFactory
@@ -12,21 +10,8 @@ internal class GamesRepositoryImpl(
     override suspend fun getAllGames(page: Int, limit: Int): List<Game> =
         factory.cache.getAllGames(page, limit)
 
-    override suspend fun getAllGames(isLocal: Boolean): List<Game> =
-            if (isLocal) {
-                factory.cache.getAllGames()
-            } else
-                factory.remote.getAllGames()
-
-    override suspend fun getFilteredGames(
-        filterByTitle: String,
-        filterByGenre: String,
-        filterByPlatform: String,
-        isToPlayGames: Boolean
-    ): List<Game> =
-        factory.cache.getFilteredGames(filterByTitle, filterByGenre, filterByPlatform,isToPlayGames)
-
-
+    override suspend fun getAllGames(): List<Game> =
+        factory.remote.getAllGames()
 
     override suspend fun getFilteredGames(
         limit: Int,
@@ -34,9 +19,16 @@ internal class GamesRepositoryImpl(
         filterByTitle: String,
         filterByGenre: String,
         filterByPlatform: String,
-        isToPlayGames :Boolean
+        isToPlayGames: Boolean
     ): List<Game> =
-        factory.cache.getFilteredGames(limit,page, filterByTitle, filterByGenre, filterByPlatform,isToPlayGames)
+        factory.cache.getFilteredGames(
+            limit,
+            page,
+            filterByTitle,
+            filterByGenre,
+            filterByPlatform,
+            isToPlayGames
+        )
 
     override suspend fun getGameById(gameId: Int): Game = factory.cache.getGameById(gameId)
 

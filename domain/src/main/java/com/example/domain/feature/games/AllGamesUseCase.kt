@@ -22,7 +22,7 @@ class AllGamesUseCase(
         }
     ).flow
 
-    suspend operator fun invoke(isLocal: Boolean): List<Game> {
-        return gamesRepository.getAllGames(isLocal)
+    suspend operator fun invoke(): List<Game> {
+        return gamesRepository.getAllGames()
     }
 }

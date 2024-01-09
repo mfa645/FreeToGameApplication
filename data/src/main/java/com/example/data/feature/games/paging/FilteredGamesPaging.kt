@@ -14,9 +14,7 @@ open class FilteredGamesPaging(
     private val filterByGenre: String,
     private val filterByPlatform: String,
     private val isToPlayGames: Boolean,
-): PagingSource<Int, Game>() {
-    //En vistas clásicas se utiliza PagingDataAdapter
-    //================================================
+) : PagingSource<Int, Game>() {
 
     override fun getRefreshKey(state: PagingState<Int, Game>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -25,24 +23,19 @@ open class FilteredGamesPaging(
         }
     }
 
-    // Aquí sí hay que tocar un poquito...
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Game> =
         try {
             withContext(Dispatchers.IO) {
                 val page = params.key ?: 0
                 val limit = params.loadSize
-                Timber.tag("Paging").i("Page: $page")
-                // Puede ser un flow, o una suspend que se traiga cosas de cualquier sitio,
-                // es un repositorio, por tanto...
                 val response = repository.getFilteredGames(
                     limit = limit,
-                    page= page,
-                    filterByTitle =  filterByTitle,
-                    filterByGenre =  filterByGenre,
-                    filterByPlatform =  filterByPlatform,
-                    isToPlayGames =  isToPlayGames
+                    page = page,
+                    filterByTitle = filterByTitle,
+                    filterByGenre = filterByGenre,
+                    filterByPlatform = filterByPlatform,
+                    isToPlayGames = isToPlayGames
                 )
-
                 LoadResult.Page(
                     data = response,
                     prevKey = if (page == 0) null else page.minus(1),
